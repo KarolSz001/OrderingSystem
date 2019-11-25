@@ -1,7 +1,7 @@
 package com.app.service;
 
 import com.app.exception.AppException;
-import com.app.model.Category;
+
 import com.app.model.Country;
 import com.app.repo.generic.CountryRepository;
 import com.app.repo.impl.CountryRepositoryImpl;
@@ -9,6 +9,7 @@ import com.app.service.valid.CountryValidator;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 public class CountryService {
 
@@ -53,6 +54,11 @@ public class CountryService {
 
         }
 
+    }
+    public Country findCountryInDB(){
+        List<Country> countries = countryRepository.findAll();
+        int index = new Random().nextInt(countries.size() - 1);
+        return countries.get(index);
     }
 
     public void printAllRecordsInCountries(){

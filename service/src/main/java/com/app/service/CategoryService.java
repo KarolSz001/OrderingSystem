@@ -2,19 +2,20 @@ package com.app.service;
 
 import com.app.exception.AppException;
 import com.app.model.Category;
-import com.app.model.Customer;
 import com.app.repo.generic.CategoryRepository;
 import com.app.repo.impl.CategoryRepositoryImpl;
 import com.app.service.valid.CategoryValidator;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 public class CategoryService {
 
 
     private final CategoryRepository categoryRepository = new CategoryRepositoryImpl("HBN");
     private final CategoryValidator categoryValidator = new CategoryValidator();
+
 
     public CategoryService() {
         createCategoriesInDB();
@@ -53,8 +54,17 @@ public class CategoryService {
 
         }
 
+
     }
-    public void printAllRecordsInCategories(){
+
+
+    public Category findCountryInDB() {
+        List<Category> categories = categoryRepository.findAll();
+        int index = new Random().nextInt(categories.size() - 1);
+        return categories.get(index);
+    }
+
+    public void printAllRecordsInCategories() {
         categoryRepository.findAll().forEach(System.out::print);
     }
 

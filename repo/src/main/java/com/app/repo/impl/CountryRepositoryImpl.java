@@ -2,7 +2,7 @@ package com.app.repo.impl;
 
 
 
-import com.app.model.Country;
+import com.app.model.Tra;
 import com.app.repo.generic.AbstractCrudRepository;
 import com.app.repo.generic.CountryRepository;
 
@@ -11,17 +11,17 @@ import javax.persistence.EntityTransaction;
 import java.util.Optional;
 
 
-public class CountryRepositoryImpl extends AbstractCrudRepository<Country, Long> implements CountryRepository {
+public class CountryRepositoryImpl extends AbstractCrudRepository<Tra, Long> implements CountryRepository {
     public CountryRepositoryImpl (String persistenceUnit) {
         super(persistenceUnit);
     }
 
     @Override
-    public Optional<Country> findByName(String name) {
+    public Optional<Tra> findByName(String name) {
         EntityManager em = null;
         EntityTransaction tx = null;
 
-        Optional<Country> country = Optional.empty();
+        Optional<Tra> country = Optional.empty();
 
         try {
             em = emf.createEntityManager();
@@ -29,7 +29,7 @@ public class CountryRepositoryImpl extends AbstractCrudRepository<Country, Long>
             tx.begin();
 
             country = em
-                    .createQuery("select c from Country c where c.name = :name", Country.class)
+                    .createQuery("select c from Tra c where c.name = :name", Tra.class)
                     .setParameter("name", name)
                     .getResultStream().findFirst();
 

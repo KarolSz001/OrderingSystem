@@ -1,9 +1,8 @@
 package com.app.service;
 
 import com.app.exception.AppException;
-import com.app.model.Country;
+import com.app.model.Tra;
 import com.app.model.Customer;
-import com.app.repo.generic.CountryRepository;
 import com.app.repo.generic.CustomerRepository;
 import com.app.service.valid.CustomerValidator;
 
@@ -15,11 +14,8 @@ import java.util.Optional;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
-    private final CountryRepository countryRepository;
+    private final CountryService countryService;
     private final CustomerValidator customerValidator;
-
-
-
 
 
     public Customer addCustomerToDB(Customer customer) {
@@ -32,15 +28,12 @@ public class CustomerService {
     }
 
     public Customer createCustomer() {
-
-        Integer age = DataManager.getInt("PRESS AGE");
         String name = DataManager.getLine("PRESS NAME");
         String sureName = DataManager.getLine("PRESS SURNAME");
-
-        Country country = countryRepository.findByName(DataManager.getLine("GIVE COUNTRY NAME")).orElseThrow(() -> new AppException("cannot insert country"));
+        Integer age = DataManager.getInt("PRESS AGE");
+        Tra country = countryService.findCountryInDB();
 
         Customer customer = Customer.builder().age(age).name(name).surname(sureName).country(country).build();
-
         customerValidator.validate(customer);
         if (customerValidator.hasErrors()) {
             throw new AppException("ERROR IN CUSTOMER VALIDATION");
@@ -52,6 +45,8 @@ public class CustomerService {
         }
         return addCustomerToDB(customer);
     }
+
+
 
 }
 

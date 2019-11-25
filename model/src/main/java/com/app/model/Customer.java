@@ -24,7 +24,7 @@ public class Customer {
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "country_id")
-    private Country country;
+    private Tra country;
 
     @OneToMany(mappedBy = "customer")
     @ToString.Exclude

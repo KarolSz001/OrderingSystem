@@ -23,8 +23,6 @@ public class CountryValidator extends AbstractValidator<Country>  {
         if (!isNameLengthCorrect(country.getName())) {
             err.put("Error nr 3", "Name is too short");
         }
-
-
         return err;
     }
 

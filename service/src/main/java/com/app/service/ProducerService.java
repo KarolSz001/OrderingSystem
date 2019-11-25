@@ -7,7 +7,6 @@ import com.app.model.Producer;
 import com.app.model.Trade;
 import com.app.repo.generic.CountryRepository;
 import com.app.repo.generic.ProducerRepository;
-import com.app.repo.generic.TradeRepository;
 import com.app.service.valid.ProducerValidator;
 import lombok.RequiredArgsConstructor;
 
@@ -17,16 +16,16 @@ public class ProducerService {
 
     private final ProducerRepository producerRepository;
     private final CountryRepository countryRepository;
-    private final TradeRepository tradeRepository;
+    private final TradeService tradeService;
     private final ProducerValidator producerValidator;
+    private final CountryService countryService;
 
 
-    public void addProducerToDB(Producer producer) {
-
+    public Producer addProducerToDB(Producer producer) {
         if (producer == null) {
             throw new AppException("object is null");
         }
-        producerRepository.addOrUpdate(producer);
+       return producerRepository.addOrUpdate(producer).orElseThrow(() -> new AppException("NO RECORD IN DB"));
     }
 
     private boolean isProducerAlreadyInDB(Producer producer) {
@@ -42,11 +41,9 @@ public class ProducerService {
     public Producer createProducer() {
 
         String producerName = DataManager.getLine("PRESS PRODUCER NAME");
-        String tradeName = DataManager.getLine("PRESS TRADE NAME");
-        String countName = DataManager.getLine("PRESS COUNTRY NAME");
 
-        Country country = countryRepository.findByName(countName).orElseThrow(() -> new AppException("no country records for this name"));
-        Trade trade = tradeRepository.findByName(tradeName).orElseThrow(() -> new AppException("no trade records for this name"));
+        Country country = countryService.findCountryInDB();
+        Trade trade = tradeService.findTradeInDB();
 
         Producer producer = Producer.builder().name(producerName).country(country).trade(trade).build();
 
@@ -58,15 +55,7 @@ public class ProducerService {
         if (producerValidator.hasErrors()) {
             throw new AppException("ERROR IN PRODUCER VALIDATION");
         }
-
-
-        var insertProducer = producerRepository
-                .addOrUpdate(producer)
-                .orElseThrow(() -> new AppException("cannot insert PRODUCER"));
-
-        return insertProducer;
-
-
+        return addProducerToDB(producer);
     }
 
 

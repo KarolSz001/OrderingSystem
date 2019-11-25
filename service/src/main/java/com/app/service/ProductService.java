@@ -16,7 +16,8 @@ public class ProductService {
 
     ProductValidator productValidator;
     ProductRepository productRepository;
-    CategoryRepository categoryRepository;
+    CategoryService categoryService;
+
 
 
     public void addProducerToDB(Product product) {
@@ -43,7 +44,7 @@ public class ProductService {
         String productName = DataManager.getLine("PRESS PRODUCT NAME");
         BigDecimal price = BigDecimal.valueOf(DataManager.getInt("PRESS PRICE"));
         String categoryName = DataManager.getLine("PRESS CATEGORY NAME");
-        Category category = categoryRepository.findByName(categoryName).orElseThrow(() -> new AppException("NO RECORD IN DB"));
+        Category category = categoryService.findByName(categoryName).orElseThrow(() -> new AppException("NO RECORD IN DB"));
         Set<GuaranteeComponents> guaranteeComponents = Set.of(GuaranteeComponents.EXCHANGE, GuaranteeComponents.SERVICE);
         Product product = Product.builder().name(productName).category(category).price(price).category(category).components(guaranteeComponents).build();
 

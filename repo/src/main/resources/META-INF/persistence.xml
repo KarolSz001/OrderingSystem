@@ -8,7 +8,7 @@
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
     <class>com.app.model.Trade</class>
-    <class>com.app.model.Country</class>
+    <class>com.app.model.Tra</class>
     <class>com.app.model.Category</class>
     <class>com.app.model.Customer</class>
     <class>com.app.model.CustomerOrder</class>
