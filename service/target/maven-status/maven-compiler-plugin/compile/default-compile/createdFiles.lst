@@ -1,0 +1,14 @@
+com\app\service\valid\Validator.class
+com\app\service\StockService.class
+com\app\service\ProductService.class
+com\app\service\CustomerService.class
+com\app\service\valid\ProductValidator.class
+com\app\service\valid\ShopValidator.class
+com\app\service\DataManager.class
+com\app\service\valid\StockValidator.class
+com\app\service\ShopService.class
+com\app\service\valid\CustomerValidator.class
+com\app\service\valid\ProducerValidator.class
+com\app\service\valid\AbstractValidator.class
+com\app\service\ProducerService.class
+com\app\service\valid\CountryValidator.class
