@@ -1,6 +1,7 @@
 package com.app.service;
 
 import com.app.exception.AppException;
+import com.app.model.Country;
 import com.app.model.Tra;
 import com.app.model.Shop;
 import com.app.repo.generic.CountryRepository;
@@ -31,7 +32,7 @@ public class ShopService {
 
         String name = DataManager.getLine("PRESS NAME");
 
-        Tra country = countryRepository.findByName(DataManager.getLine("GIVE SHOP NAME")).orElseThrow(() -> new AppException("cannot insert shop"));
+       Country country = countryRepository.findByName(DataManager.getLine("GIVE SHOP NAME")).orElseThrow(() -> new AppException("cannot insert shop"));
 
         Shop shop = Shop.builder().name(name).country(country).build();
 

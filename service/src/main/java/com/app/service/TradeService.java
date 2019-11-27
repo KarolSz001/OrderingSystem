@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+
+
 public class TradeService {
 
     TradeRepository tradeRepository = new TradeRepositoryImpl("HBN");

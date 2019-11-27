@@ -26,6 +26,6 @@ public class Shop {
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "country_id")
-    private Tra country;
+    private Country country;
 
 }

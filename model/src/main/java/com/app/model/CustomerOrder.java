@@ -40,4 +40,6 @@ public class CustomerOrder {
     @JoinColumn(name = "product_id")
     private Product product;
 
+
+
 }

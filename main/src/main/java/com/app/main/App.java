@@ -64,5 +64,7 @@ public class App {
         CategoryService categoryService = new CategoryService();
         categoryService.printAllRecordsInCategories();
 
+
+        // order service , decrease numer in stock !!
     }
 }

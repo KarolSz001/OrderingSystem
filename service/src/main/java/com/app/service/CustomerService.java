@@ -1,21 +1,22 @@
 package com.app.service;
 
 import com.app.exception.AppException;
-import com.app.model.Tra;
+import com.app.model.Country;
 import com.app.model.Customer;
 import com.app.repo.generic.CustomerRepository;
+import com.app.repo.impl.CustomerRepositoryImpl;
 import com.app.service.valid.CustomerValidator;
 
 import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
 
-@RequiredArgsConstructor
+
 public class CustomerService {
 
-    private final CustomerRepository customerRepository;
-    private final CountryService countryService;
-    private final CustomerValidator customerValidator;
+    private final CustomerRepository customerRepository = new CustomerRepositoryImpl("HBN");
+    private final CountryService countryService = new CountryService();
+    private final CustomerValidator customerValidator = new CustomerValidator();
 
 
     public Customer addCustomerToDB(Customer customer) {
@@ -31,7 +32,7 @@ public class CustomerService {
         String name = DataManager.getLine("PRESS NAME");
         String sureName = DataManager.getLine("PRESS SURNAME");
         Integer age = DataManager.getInt("PRESS AGE");
-        Tra country = countryService.findCountryInDB();
+        Country country = countryService.findCountryInDB();
 
         Customer customer = Customer.builder().age(age).name(name).surname(sureName).country(country).build();
         customerValidator.validate(customer);
@@ -46,6 +47,14 @@ public class CustomerService {
         return addCustomerToDB(customer);
     }
 
+    public void showAllCustomersInDB(){
+        customerRepository.findAll().forEach(System.out::print);
+    }
+
+    public Customer findCustomerById(Long id){
+        return customerRepository.findOne(id).orElseThrow(()->new AppException("THERE IS RECORD IN DB"));
+
+    }
 
 
 }

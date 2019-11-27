@@ -47,14 +47,13 @@ public class CountryService {
             }
 
             Optional<Country> categoryByName = countryRepository.findByName(country.getName());
-            if (!(categoryByName.isPresent() && categoryByName.get().getName().equals(country.getName()))) {
-//                throw new AppException("THERE IS RECORD WITH SIMILAR CATEGORY NAME IN DB");
+            if (!(categoryByName.isPresent() && categoryByName.get().getName().equals(country.getName())))
                 addCategoryToDB(country);
             }
 
         }
 
-    }
+
     public Country findCountryInDB(){
         List<Country> countries = countryRepository.findAll();
         int index = new Random().nextInt(countries.size() - 1);

@@ -12,6 +12,7 @@ import java.util.Set;
 @Builder
 @Entity
 @Table(name = "customers")
+
 public class Customer {
     @Id
     @GeneratedValue
@@ -24,7 +25,7 @@ public class Customer {
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "country_id")
-    private Tra country;
+    private Country country;
 
     @OneToMany(mappedBy = "customer")
     @ToString.Exclude

@@ -4,6 +4,7 @@ package com.app.service;
 import com.app.exception.AppException;
 import com.app.model.Country;
 import com.app.model.Producer;
+import com.app.model.Product;
 import com.app.model.Trade;
 import com.app.repo.generic.CountryRepository;
 import com.app.repo.generic.ProducerRepository;
@@ -15,10 +16,10 @@ import lombok.RequiredArgsConstructor;
 public class ProducerService {
 
     private final ProducerRepository producerRepository;
-    private final CountryRepository countryRepository;
     private final TradeService tradeService;
     private final ProducerValidator producerValidator;
     private final CountryService countryService;
+
 
 
     public Producer addProducerToDB(Producer producer) {
@@ -41,7 +42,6 @@ public class ProducerService {
     public Producer createProducer() {
 
         String producerName = DataManager.getLine("PRESS PRODUCER NAME");
-
         Country country = countryService.findCountryInDB();
         Trade trade = tradeService.findTradeInDB();
 
@@ -57,6 +57,10 @@ public class ProducerService {
         }
         return addProducerToDB(producer);
     }
+
+
+
+
 
 
 }

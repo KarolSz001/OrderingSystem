@@ -2,6 +2,7 @@ package com.app.service;
 
 import com.app.exception.AppException;
 
+import java.nio.file.LinkOption;
 import java.util.Scanner;
 
 public class DataManager {
@@ -15,6 +16,15 @@ public class DataManager {
             throw new AppException("WRONG DATA TRY AGIAN");
         }
         return Integer.parseInt(line);
+    }
+
+    public static Long getLong(String message)throws AppException {
+        System.out.println(message);
+        String line = sc.nextLine();
+        if (line == null || !line.matches("\\d+")) {
+            throw new AppException("WRONG DATA TRY AGIAN");
+        }
+        return Long.parseLong(line);
     }
 
     public static Integer getInt2(String message) {

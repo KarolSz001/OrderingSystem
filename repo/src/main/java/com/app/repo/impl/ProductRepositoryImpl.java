@@ -1,7 +1,5 @@
 package com.app.repo.impl;
 
-
-
 import com.app.model.Product;
 import com.app.repo.generic.AbstractCrudRepository;
 import com.app.repo.generic.ProductRepository;
@@ -46,4 +44,70 @@ public class ProductRepositoryImpl extends AbstractCrudRepository<Product, Long>
         }
         return productByName;
     }
-}
+
+    public Optional<Integer> getQuantityOfProductInStock(String productName){
+
+        EntityManager em = null;
+        EntityTransaction tx = null;
+        Optional<Integer> quantity = Optional.empty();
+
+        try {
+            em = emf.createEntityManager();
+            tx = em.getTransaction();
+            tx.begin();
+
+            quantity = em
+                    .createQuery("select s.quantity from Product p join p.stock s where p.name = : name ", Integer.class)
+                    .setParameter("name", productName)
+                    .getResultStream().findFirst();
+
+            tx.commit();
+
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
+        return quantity;
+    }
+
+    public Optional<Long> getIdProductInStock(String productName){
+
+        EntityManager em = null;
+        EntityTransaction tx = null;
+        Optional<Long> idNumber = Optional.empty();
+
+        try {
+            em = emf.createEntityManager();
+            tx = em.getTransaction();
+            tx.begin();
+
+            idNumber = em
+                    .createQuery("select s.id from Product p join p.stock s where p.name = : name ", Long.class)
+                    .setParameter("name", productName)
+                    .getResultStream().findFirst();
+
+            tx.commit();
+
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
+        return idNumber;
+    }
+
+
+
+
+    }
