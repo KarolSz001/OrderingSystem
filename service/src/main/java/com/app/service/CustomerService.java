@@ -7,7 +7,6 @@ import com.app.repo.generic.CustomerRepository;
 import com.app.repo.impl.CustomerRepositoryImpl;
 import com.app.service.valid.CustomerValidator;
 
-import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
 
@@ -24,6 +23,7 @@ public class CustomerService {
         if (customer == null) {
             throw new AppException("object is null");
         }
+        System.out.println("New customer RECORD --->>>" + customer);
         return customerRepository.addOrUpdate(customer)
                 .orElseThrow(() -> new AppException("cannot insert customer"));
     }
@@ -41,18 +41,19 @@ public class CustomerService {
         }
 
         Optional<Customer> customerBySurname = customerRepository.findByName(sureName);
-        if(customerBySurname.isPresent() && customerBySurname.get().getName().equals(customer.getName())){
+        if (customerBySurname.isPresent() && customerBySurname.get().getName().equals(customer.getName())) {
             throw new AppException("THERE IS RECORD WITH SIMILAR NAME AND SURNAME IN DB");
         }
+
         return addCustomerToDB(customer);
     }
 
-    public void showAllCustomersInDB(){
+    public void showAllCustomersInDB() {
         customerRepository.findAll().forEach(System.out::print);
     }
 
-    public Customer findCustomerById(Long id){
-        return customerRepository.findOne(id).orElseThrow(()->new AppException("THERE IS RECORD IN DB"));
+    public Customer findCustomerById(Long id) {
+        return customerRepository.findOne(id).orElseThrow(() -> new AppException("THERE IS RECORD IN DB"));
 
     }
 

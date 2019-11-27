@@ -51,16 +51,15 @@ public class CategoryService {
 //                throw new AppException("THERE IS RECORD WITH SIMILAR CATEGORY NAME IN DB");
                 addCategoryToDB(category);
             }
-
         }
-
-
     }
 
 
     public Category findCountryInDB() {
+
         List<Category> categories = categoryRepository.findAll();
         int index = new Random().nextInt(categories.size() - 1);
+        System.out.println("List of counties in DB , randomly Added --->>>" + categories.get(index));
         return categories.get(index);
     }
 

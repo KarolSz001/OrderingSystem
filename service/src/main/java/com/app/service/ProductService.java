@@ -48,7 +48,7 @@ public class ProductService {
         String productName = DataManager.getLine("PRESS PRODUCT NAME");
         BigDecimal price = BigDecimal.valueOf(DataManager.getInt("PRESS PRICE"));
         Category category = categoryService.findCountryInDB();
-        Set<GuaranteeComponents> guaranteeComponents = Set.of(GuaranteeComponents.EXCHANGE, GuaranteeComponents.SERVICE);
+        Set<GuaranteeComponents> guaranteeComponents = Set.of(GuaranteeComponents.getRandomComponent());
 
         Product product = Product.builder().name(productName).category(category).price(price).category(category).components(guaranteeComponents).build();
 
@@ -61,6 +61,8 @@ public class ProductService {
         }
         return addProductToDB(product);
     }
+
+
 
     public Integer getQuantityOfProductInStock(String productName){
        return productRepository.getQuantityOfProductInStock(productName).orElseThrow(() -> new AppException("NO RECORD IN DB"));

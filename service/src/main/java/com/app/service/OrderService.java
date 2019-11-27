@@ -3,7 +3,6 @@ package com.app.service;
 import com.app.exception.AppException;
 import com.app.model.*;
 import com.app.model.enums.EPayment;
-import com.app.model.enums.GuaranteeComponents;
 import com.app.repo.generic.CustomerOrderRepository;
 import com.app.repo.impl.CustomerOrderRepositoryImpl;
 import com.app.service.valid.OrderValidator;
@@ -41,11 +40,12 @@ public class OrderService {
 
         productService.decreaseQuantityOfProductInStock(product.getName(), quantity);
         CustomerOrder order = CustomerOrder.builder().customer(customer).date(LocalDate.now()).discount(discount).quantity(quantity).payment(payment).product(product).build();
-        orderValidator.validate(order);
 
+        orderValidator.validate(order);
         if (orderValidator.hasErrors()) {
             throw new AppException("ERROR IN PRODUCT VALIDATION");
         }
+
         return addOrderToDB(order);
     }
 
