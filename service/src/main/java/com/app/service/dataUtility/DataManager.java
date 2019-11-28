@@ -1,4 +1,4 @@
-package com.app.service;
+package com.app.service.dataUtility;
 
 import com.app.exception.AppException;
 

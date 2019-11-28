@@ -18,6 +18,7 @@
     <class>com.app.model.Product</class>
     <class>com.app.model.Shop</class>
     <class>com.app.model.Stock</class>
+    <class>com.app.model.Country</class>
 
         <properties>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
@@ -25,7 +26,7 @@
             <property name="javax.persistence.jdbc.user" value="root" />
             <property name="javax.persistence.jdbc.password" value="admin" />
             <property name="hibernate.show_sql" value="true" />
-            <property name="hibernate.hbm2ddl.auto" value="update" />
+            <property name="hibernate.hbm2ddl.auto" value="create" />
         </properties>
 
     </persistence-unit>

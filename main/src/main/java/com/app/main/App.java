@@ -59,12 +59,14 @@ public class App {
         ControlService controlService = new ControlService();
         controlService.controlRun();*/
 
-        var categoryRepo = new CategoryRepositoryImpl("HBN");
+     /*   var categoryRepo = new CategoryRepositoryImpl("HBN");
         categoryRepo.deleteAll();
         CategoryService categoryService = new CategoryService();
-        categoryService.printAllRecordsInCategories();
+        categoryService.printAllRecordsInCategories();*/
 
 
         // order service , decrease numer in stock !!
+        ControlService controlService =  new ControlService();
+        controlService.controlRun();
     }
 }

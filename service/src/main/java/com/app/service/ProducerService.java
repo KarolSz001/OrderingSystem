@@ -4,10 +4,9 @@ package com.app.service;
 import com.app.exception.AppException;
 import com.app.model.Country;
 import com.app.model.Producer;
-import com.app.model.Product;
 import com.app.model.Trade;
-import com.app.repo.generic.CountryRepository;
 import com.app.repo.generic.ProducerRepository;
+import com.app.service.dataUtility.DataManager;
 import com.app.service.valid.ProducerValidator;
 import lombok.RequiredArgsConstructor;
 

@@ -8,6 +8,7 @@ import com.app.model.Stock;
 import com.app.repo.generic.ProductRepository;
 import com.app.repo.generic.ShopRepository;
 import com.app.repo.generic.StockRepository;
+import com.app.service.dataUtility.DataManager;
 
 public class StockService {
 
@@ -29,6 +30,7 @@ public class StockService {
         productRepository.findAll().forEach(System.out::print);  // print with category of
         Long idProduct = DataManager.getLong("PRESS ID PRODUCT OF YOU CHOICE");
         Product product = productRepository.findOne(idProduct).orElseThrow(() -> new AppException("NO RECORD FOUND"));
+
         System.out.println("List of shops in our DataBase");
         shopRepository.findAll().forEach(System.out::print);
         Long idShop = DataManager.getLong("PRESS ID SHOP OF YOU CHOICE");
@@ -38,6 +40,8 @@ public class StockService {
         Stock stock = Stock.builder().product(product).quantity(quantityProductInStock).shop(shop).build();
 
         return addRecordToStock(stock);
+
+
     }
 
 }
