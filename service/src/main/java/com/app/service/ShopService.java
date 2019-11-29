@@ -3,44 +3,83 @@ package com.app.service;
 import com.app.exception.AppException;
 import com.app.model.Country;
 import com.app.model.Shop;
-import com.app.repo.generic.CountryRepository;
 import com.app.repo.generic.ShopRepository;
+import com.app.repo.impl.ShopRepositoryImpl;
 import com.app.service.dataUtility.DataManager;
 import com.app.service.valid.CountryValidator;
 import com.app.service.valid.ShopValidator;
-import lombok.RequiredArgsConstructor;
 
+import java.util.List;
 import java.util.Optional;
 
-@RequiredArgsConstructor
+
 public class ShopService {
 
-    private final ShopRepository shopRepository;
-    private final ShopValidator shopValidator;
-    private final CountryRepository countryRepository;
-    private final CountryValidator countryValidator;
+    private final ShopRepository shopRepository = new ShopRepositoryImpl("HBN");
+    private final CountryService countryService = new CountryService();
+    private final CountryValidator countryValidator = new CountryValidator();
+    private final ShopValidator shopValidator = new ShopValidator();
 
-    public void addShopToDB(Shop shop) {
+    public ShopService() {
+    }
+
+    public Shop addShopToDB(Shop shop) {
 
         if (shop == null) {
             throw new AppException("object is null");
         }
         shopRepository.addOrUpdate(shop);
+        return shop;
     }
 
-    private Shop createShop() {
+    private void generateShopsInDB() {
 
-        String name = DataManager.getLine("PRESS NAME");
-        System.out.println("BELOW LIST OF COUNTRIES IN DB");
-        countryRepository.findAll().forEach(System.out::print);
-        Long idCountry = DataManager.getLong("PRESS NUMBER OF ID COUNTRY");
-        Country country = countryRepository.findOne(idCountry).orElseThrow(() -> new AppException("cannot find record"));
-        countryValidator.validate(country);
+        List<String> shopNames = List.of("BIEDRA", "ZABA", "TESCO");
 
-        if(countryValidator.hasErrors()){
-            throw new AppException("VALID RECORD OF COUNTRY");
+        for (String shopName : shopNames) {
+            Country country = countryService.findRandomCountryFromDB();
+            Shop shop = Shop.builder().name(shopName).country(country).build();
+            addShopToDB(shop);
+        }
+    }
+
+    public void shopInit() {
+
+        String answer = DataManager.getLine("WELCOME TO SHOP DATA PANEL GENERATOR PRESS Y IF YOU WANNA PRESS DATA MANUALLY OR N IF YOU WANNA FILL THEM IN AUTOMATE");
+        if (answer.toUpperCase().equals("Y")) {
+            shopDataInitAutoFill();
+        } else {
+            categoryDataShopInitManualFill();
+        }
+    }
+
+    public void printAllShopRecordsInDB() {
+        System.out.println("LOADING DATA COMPLETED ----> BELOW ALL RECORDS");
+        shopRepository.findAll().forEach((s) -> System.out.println(s + "\n"));
+    }
+
+    private void shopDataInitAutoFill() {
+        generateShopsInDB();
+        printAllShopRecordsInDB();
+    }
+
+    private void categoryDataShopInitManualFill() {
+
+        System.out.println("LOADING MANUAL PROGRAM TO UPDATE DATA_BASE");
+        int numberOfRecords = DataManager.getInt("PRESS NUMBER OF RECORD YOU WANNA ADD TO DB");
+
+        for (int i = 1; i <= numberOfRecords; i++) {
+            singleShopRecordCreator();
         }
 
+        System.out.println("LOADING DATA COMPLETED ----> BELOW ALL RECORDS");
+        printAllShopRecordsInDB();
+    }
+
+    private Shop singleShopRecordCreator() {
+        String name = DataManager.getLine("PRESS SHOP NAME");
+        countryService.printAllRecordsInCountries();
+        Country country = countryService.findCountryByName(name);
         Shop shop = Shop.builder().name(name).country(country).build();
 
         shopValidator.validate(shop);
@@ -49,15 +88,10 @@ public class ShopService {
         }
 
         Optional<Shop> shopByName = shopRepository.findByName(name);
-        if(shopByName.isPresent() && shopByName.get().getName().equals(shop.getName())){
-            throw new AppException("THERE IS RECORD WITH SIMILAR NAME IN DB");
+        if (shopByName.isEmpty()) {
+            addShopToDB(shop);
         }
-
-        var insertShop= shopRepository
-                .addOrUpdate(shop)
-                .orElseThrow(() -> new AppException("cannot insert SHOP"));
-
-        return insertShop;
+        return addShopToDB(shop);
     }
 
 

@@ -6,19 +6,21 @@ import com.app.model.Country;
 import com.app.model.Producer;
 import com.app.model.Trade;
 import com.app.repo.generic.ProducerRepository;
+import com.app.repo.impl.ProducerRepositoryImpl;
 import com.app.service.dataUtility.DataManager;
 import com.app.service.valid.ProducerValidator;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Optional;
 
 @RequiredArgsConstructor
 
 public class ProducerService {
 
-    private final ProducerRepository producerRepository;
-    private final TradeService tradeService;
-    private final ProducerValidator producerValidator;
-    private final CountryService countryService;
-
+    private final ProducerRepository producerRepository = new ProducerRepositoryImpl("HBN");
+    private final TradeService tradeService = new TradeService();
+    private final ProducerValidator producerValidator = new ProducerValidator();
+    private final CountryService countryService = new CountryService();
 
 
     public Producer addProducerToDB(Producer producer) {
@@ -38,12 +40,11 @@ public class ProducerService {
     }
 
 
-    public Producer createProducer() {
+    public Producer generateProducerAutoMode() {
 
         String producerName = DataManager.getLine("PRESS PRODUCER NAME");
-        Country country = countryService.findCountryInDB();
-        Trade trade = tradeService.findTradeInDB();
-
+        Country country = countryService.getRandomCountry();
+        Trade trade = tradeService.findRandomTradeInDB();
         Producer producer = Producer.builder().name(producerName).country(country).trade(trade).build();
 
        if(isProducerAlreadyInDB(producer)){
@@ -55,6 +56,63 @@ public class ProducerService {
             throw new AppException("ERROR IN PRODUCER VALIDATION");
         }
         return addProducerToDB(producer);
+    }
+
+
+    public void producerInit() {
+
+        String answer = DataManager.getLine("WELCOME TO PRODUCER DATA PANEL GENERATOR PRESS Y IF YOU WANNA PRESS DATA AUTOMATE OR N IF YOU WANNA FILL THEM IN MANUAL");
+        if (answer.toUpperCase().equals("Y")) {
+            producerDataInitAuto();
+        } else {
+            producerDataInitManual();
+        }
+    }
+
+    public void printProducerRecordsFromDB() {
+        System.out.println("LOADING DATA COMPLETED ----> BELOW ALL RECORDS");
+        producerRepository.findAll().forEach((s) -> System.out.println(s + "\n"));
+    }
+
+    private void producerDataInitAuto() {
+        generateProducerAutoMode();
+        printProducerRecordsFromDB();
+    }
+
+    private void producerDataInitManual() {
+
+        System.out.println("LOADING MANUAL PROGRAM TO UPDATE DATA_BASE");
+        int numberOfRecords = DataManager.getInt("PRESS NUMBER OF PRODUCERS YOU WANNA ADD TO DB");
+
+        for (int i = 1; i <= numberOfRecords; i++) {
+            singleProducerRecordCreator();
+        }
+        System.out.println("LOADING DATA COMPLETED ----> BELOW ALL RECORDS OF PRODUCERS");
+        printProducerRecordsFromDB();
+    }
+
+    private Producer singleProducerRecordCreator() {
+        String producerName = DataManager.getLine("PRESS PRODUCER NAME");
+        countryService.printAllRecordsInCountries();
+        Country country = countryService.findCountryByName(DataManager.getLine("PRESS COUNTRY NAME"));
+        tradeService.printAllRecordsInTrades();
+        Trade trade = tradeService.findTradeByName(DataManager.getLine("PRESS TRADE NAME"));
+        Producer producer = Producer.builder().name(producerName).country(country).trade(trade).build();
+
+        producerValidator.validate(producer);
+        if (producerValidator.hasErrors()) {
+            throw new AppException("ERROR IN TRADE VALIDATION");
+        }
+
+        Optional<Producer> producerByName = producerRepository.findByName(producerName);
+        if (producerByName.isEmpty()) {
+            throw new AppException("NO RECORDS TRADE IN DB");
+        }
+        return addProducerToDB(producer);
+    }
+
+    public void printAllRecordsInProducers(){
+        producerRepository.findAll().forEach((s)-> System.out.println(s + "\n"));
     }
 
 

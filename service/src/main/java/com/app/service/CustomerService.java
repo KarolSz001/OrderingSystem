@@ -33,7 +33,7 @@ public class CustomerService {
         String name = DataManager.getLine("PRESS NAME");
         String sureName = DataManager.getLine("PRESS SURNAME");
         Integer age = DataManager.getInt("PRESS AGE");
-        Country country = countryService.findCountryInDB();
+        Country country = countryService.getRandomCountry();
 
         Customer customer = Customer.builder().age(age).name(name).surname(sureName).country(country).build();
         customerValidator.validate(customer);

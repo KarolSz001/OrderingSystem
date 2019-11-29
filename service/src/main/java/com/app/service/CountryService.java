@@ -9,7 +9,6 @@ import com.app.service.dataUtility.DataManager;
 import com.app.service.valid.CountryValidator;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 
@@ -33,7 +32,9 @@ public class CountryService {
     }
 
     public void createCountriesInDb() {
+
         System.out.println("LOADING AUTOFILL PROGRAM TO UPDATE DATA_BASE");
+
         List<Country> countries = List.of(
                 Country.builder().name("POLAND").build(),
                 Country.builder().name("GERMAN").build(),
@@ -42,7 +43,6 @@ public class CountryService {
         );
 
         for (Country country : countries) {
-
             countryValidator.validate(country);
             if (countryValidator.hasErrors()) {
                 throw new AppException("ERROR IN COUNTRY VALIDATION");
@@ -56,19 +56,19 @@ public class CountryService {
     }
 
 
-    protected Country findCountryInDB() {
+    protected Country getRandomCountry() {
         List<Country> countries = countryRepository.findAll();
         int index = new Random().nextInt(countries.size() - 1);
         return countries.get(index);
     }
 
-    private void printAllRecordsInCountries() {
+    public void printAllRecordsInCountries() {
         System.out.println("LOADING DATA COMPLETED ----> BELOW ALL RECORDS");
-        countryRepository.findAll().forEach((s)-> System.out.println(s + "\n"));
+        countryRepository.findAll().forEach((s) -> System.out.println(s + "\n"));
     }
 
 
-    public void countryDataInit() {
+    public void countryInit() {
         String answer = DataManager.getLine("WELCOME TO COUNTRY DATA PANEL GENERATOR PRESS Y IF YOU WANNA PRESS DATA MANUALLY OR N IF YOU WANNA FILL THEM IN AUTOMATE");
 
         if (answer.toUpperCase().equals("Y")) {
@@ -100,9 +100,27 @@ public class CountryService {
         String name = DataManager.getLine("PRESS COUNTRY NAME");
         Country country = Country.builder().name(name).build();
         countryValidator.validate(country);
+
         if (countryValidator.hasErrors()) {
             throw new AppException("VALID DATA IN COUNTRY CREATOR");
         }
         return country;
+    }
+
+    public Country findCountryById(Long id) {
+        return countryRepository.findOne(id).orElseThrow(() -> new AppException("cannot find record"));
+    }
+
+
+    public Country findCountryByName(String name) {
+        return countryRepository.findByName(name).orElseThrow(() -> new AppException("cannot find record"));
+    }
+
+    public Country findRandomCountryFromDB() {
+        List<Country> countries = countryRepository.findAll();
+        if (countries.size() == 0) {
+            throw new AppException("THERE IS NO RECORDS IN DB");
+        } else
+            return countries.get(new Random().nextInt(countries.size()));
     }
 }

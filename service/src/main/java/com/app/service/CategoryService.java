@@ -65,7 +65,7 @@ public class CategoryService {
         categoryRepository.findAll().forEach((s)-> System.out.println(s + "\n"));
     }
 
-    public void categoryDataInit() {
+    public void categoryInit() {
         String answer = DataManager.getLine("WELCOME TO CATEGORY DATA PANEL GENERATOR PRESS Y IF YOU WANNA PRESS DATA MANUALLY OR N IF YOU WANNA FILL THEM IN AUTOMATE");
 
         if (answer.toUpperCase().equals("Y")) {
@@ -88,11 +88,13 @@ public class CategoryService {
         for (int i = 1; i <= numberOfRecords; i++) {
             singleCategoryRecordCreator();
         }
+
         System.out.println("LOADING DATA COMPLETED ----> BELOW ALL RECORDS");
         printAllRecordsInCategories();
     }
 
     private Category singleCategoryRecordCreator() {
+
         String name = DataManager.getLine("PRESS CATEGORY NAME");
         Category category = Category.builder().name(name).build();
         categoryValidator.validate(category);

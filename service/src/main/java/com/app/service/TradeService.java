@@ -51,7 +51,7 @@ public class TradeService {
         }
     }
 
-    public Trade findTradeInDB() {
+    public Trade findRandomTradeInDB() {
         List<Trade> trades = tradeRepository.findAll();
         int index = new Random().nextInt(trades.size() - 1);
         return trades.get(index);
@@ -62,7 +62,7 @@ public class TradeService {
         tradeRepository.findAll().forEach((s)-> System.out.println(s + "\n"));
     }
 
-    public void tradeDataInit() {
+    public void tradeInit() {
         String answer = DataManager.getLine("WELCOME TO TRADE DATA PANEL GENERATOR PRESS Y IF YOU WANNA PRESS DATA MANUALLY OR N IF YOU WANNA FILL THEM IN AUTOMATE");
 
         if (answer.toUpperCase().equals("Y")) {
@@ -97,5 +97,9 @@ public class TradeService {
             throw new AppException("VALID DATA IN COUNTRY CREATOR");
         }
         return trade;
+    }
+
+    public Trade findTradeByName(String name){
+        return tradeRepository.findByName(name).orElseThrow(()->new AppException("NO RECORDS FOUND IN DB"));
     }
 }
