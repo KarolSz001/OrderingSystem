@@ -11,7 +11,9 @@ import com.app.service.dataUtility.DataManager;
 import com.app.service.valid.ProducerValidator;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @RequiredArgsConstructor
 
@@ -27,7 +29,7 @@ public class ProducerService {
         if (producer == null) {
             throw new AppException("object is null");
         }
-       return producerRepository.addOrUpdate(producer).orElseThrow(() -> new AppException("NO RECORD IN DB"));
+        return producerRepository.addOrUpdate(producer).orElseThrow(() -> new AppException("NO RECORD IN DB"));
     }
 
     private boolean isProducerAlreadyInDB(Producer producer) {
@@ -40,22 +42,16 @@ public class ProducerService {
     }
 
 
-    public Producer generateProducerAutoMode() {
+    public void generateProducersInDB() {
 
-        String producerName = DataManager.getLine("PRESS PRODUCER NAME");
-        Country country = countryService.getRandomCountry();
-        Trade trade = tradeService.findRandomTradeInDB();
-        Producer producer = Producer.builder().name(producerName).country(country).trade(trade).build();
+        List<String> producerNames = List.of("DANONE", "IBM", "MOTOROLA", "TREC");
 
-       if(isProducerAlreadyInDB(producer)){
-           throw new AppException("THIS RECORD ISA ALREADY IN DB");
-       }
-
-        producerValidator.validate(producer);
-        if (producerValidator.hasErrors()) {
-            throw new AppException("ERROR IN PRODUCER VALIDATION");
+        for (String name : producerNames) {
+            Country country = countryService.findRandomCountry();
+            Trade trade = tradeService.findRandomTradeInDB();
+            Producer producer = Producer.builder().name(name).country(country).trade(trade).build();
+            addProducerToDB(producer);
         }
-        return addProducerToDB(producer);
     }
 
 
@@ -63,9 +59,9 @@ public class ProducerService {
 
         String answer = DataManager.getLine("WELCOME TO PRODUCER DATA PANEL GENERATOR PRESS Y IF YOU WANNA PRESS DATA AUTOMATE OR N IF YOU WANNA FILL THEM IN MANUAL");
         if (answer.toUpperCase().equals("Y")) {
-            producerDataInitAuto();
+            producerInitAuto();
         } else {
-            producerDataInitManual();
+            producerInitManual();
         }
     }
 
@@ -74,12 +70,12 @@ public class ProducerService {
         producerRepository.findAll().forEach((s) -> System.out.println(s + "\n"));
     }
 
-    private void producerDataInitAuto() {
-        generateProducerAutoMode();
+    private void producerInitAuto() {
+        generateProducersInDB();
         printProducerRecordsFromDB();
     }
 
-    private void producerDataInitManual() {
+    private void producerInitManual() {
 
         System.out.println("LOADING MANUAL PROGRAM TO UPDATE DATA_BASE");
         int numberOfRecords = DataManager.getInt("PRESS NUMBER OF PRODUCERS YOU WANNA ADD TO DB");
@@ -111,13 +107,14 @@ public class ProducerService {
         return addProducerToDB(producer);
     }
 
-    public void printAllRecordsInProducers(){
-        producerRepository.findAll().forEach((s)-> System.out.println(s + "\n"));
+    public void printAllRecordsInProducers() {
+        producerRepository.findAll().forEach((s) -> System.out.println(s + "\n"));
     }
 
-
-
-
+    public Producer findRandomProducerFromDb() {
+        List<Producer> producers = producerRepository.findAll();
+        return producers.get(new Random().nextInt(producers.size() - 1));
+    }
 
 
 }

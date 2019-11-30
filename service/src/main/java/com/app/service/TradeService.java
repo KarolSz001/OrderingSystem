@@ -40,10 +40,6 @@ public class TradeService {
         );
 
         for (Trade trade : trades) {
-            tradeValidator.validate(trade);
-            if (tradeValidator.hasErrors()) {
-                throw new AppException("ERROR IN COUNTRY VALIDATION");
-            }
             Optional<Trade> tradeByName = tradeRepository.findByName(trade.getName());
             if (tradeByName.isEmpty()) {
                 addCategoryToDB(trade);

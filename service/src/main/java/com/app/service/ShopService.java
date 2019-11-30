@@ -9,6 +9,7 @@ import com.app.service.dataUtility.DataManager;
 import com.app.service.valid.CountryValidator;
 import com.app.service.valid.ShopValidator;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,7 +40,9 @@ public class ShopService {
         for (String shopName : shopNames) {
             Country country = countryService.findRandomCountryFromDB();
             Shop shop = Shop.builder().name(shopName).country(country).build();
-            addShopToDB(shop);
+            Optional<Shop> shopByName = shopRepository.findByName(shopName);
+            if(shopByName.isEmpty())
+                addShopToDB(shop);
         }
     }
 

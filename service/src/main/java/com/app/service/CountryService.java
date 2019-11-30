@@ -56,7 +56,7 @@ public class CountryService {
     }
 
 
-    protected Country getRandomCountry() {
+    protected Country findRandomCountry() {
         List<Country> countries = countryRepository.findAll();
         int index = new Random().nextInt(countries.size() - 1);
         return countries.get(index);

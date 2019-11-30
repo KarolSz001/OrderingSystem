@@ -26,6 +26,7 @@ public class ControlService {
         tradeService.tradeInit();
         shopService.shopInit();
         producerService.producerInit();
+        productService.productInit();
 
 
 

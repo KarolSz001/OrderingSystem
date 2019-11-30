@@ -22,7 +22,6 @@ public class CategoryService {
     }
 
     private Category addCategoryToDB(Category category) {
-
         if (category == null) {
             throw new AppException("OBJECT IS NULL");
         }
@@ -52,8 +51,7 @@ public class CategoryService {
         }
     }
 
-    public Category findCountryInDB() {
-
+    public Category findRandomCategoryFromDB() {
         List<Category> categories = categoryRepository.findAll();
         int index = new Random().nextInt(categories.size() - 1);
         System.out.println("List of counties in DB , randomly Added --->>>" + categories.get(index));
