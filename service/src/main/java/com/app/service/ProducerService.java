@@ -4,6 +4,7 @@ package com.app.service;
 import com.app.exception.AppException;
 import com.app.model.Country;
 import com.app.model.Producer;
+import com.app.model.Product;
 import com.app.model.Trade;
 import com.app.repo.generic.ProducerRepository;
 import com.app.repo.impl.ProducerRepositoryImpl;
@@ -115,6 +116,7 @@ public class ProducerService {
         List<Producer> producers = producerRepository.findAll();
         return producers.get(new Random().nextInt(producers.size() - 1));
     }
+
 
 
 }

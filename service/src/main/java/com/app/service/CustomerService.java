@@ -9,7 +9,9 @@ import com.app.service.dataUtility.DataManager;
 import com.app.service.valid.CustomerValidator;
 
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 
 public class CustomerService {
@@ -24,12 +26,12 @@ public class CustomerService {
         if (customer == null) {
             throw new AppException("object is null");
         }
-        System.out.println("New customer RECORD --->>>" + customer);
         return customerRepository.addOrUpdate(customer)
                 .orElseThrow(() -> new AppException("cannot insert customer"));
     }
 
-    public Customer createCustomer() {
+    public Customer singleCountryRecordCreator() {
+
         String name = DataManager.getLine("PRESS NAME");
         String sureName = DataManager.getLine("PRESS SURNAME");
         Integer age = DataManager.getInt("PRESS AGE");
@@ -56,6 +58,69 @@ public class CustomerService {
     public Customer findCustomerById(Long id) {
         return customerRepository.findOne(id).orElseThrow(() -> new AppException("THERE IS RECORD IN DB"));
 
+    }
+
+    public Customer findRandomCustomerFromDb() {
+        List<Customer> customers = customerRepository.findAll();
+        System.out.println(customers);
+        return customers.get(new Random().nextInt(customers.size() - 1));
+    }
+
+    public void customerInit() {
+
+        String answer = DataManager.getLine("WELCOME TO CUSTOMER DATA PANEL GENERATOR PRESS Y IF YOU WANNA PRESS DATA MANUALLY OR N IF YOU WANNA FILL THEM IN AUTOMATE");
+        if (answer.toUpperCase().equals("Y")) {
+            customerDataInitAutoFill();
+        } else {
+            customerDataInitManualFill();
+        }
+    }
+
+    private void customerDataInitAutoFill() {
+        createCustomerInDbAuto();
+        printAllCustomersFormDb();
+    }
+
+    private void createCustomerInDbAuto() {
+        for (int i = 1; i < 5; i++) {
+            Integer age = ageGenerator();
+            String name = nameGenerator();
+            String sureName = surNameGenerator();
+            Country country = countryService.findRandomCountry();
+            Customer customer = Customer.builder().age(age).name(name).surname(sureName).country(country).build();
+            addCustomerToDB(customer);
+        }
+
+    }
+
+    private Integer ageGenerator() {
+        return new Random().nextInt(100 - 18) + 18;
+    }
+
+    private String nameGenerator() {
+        List<String> names = List.of("KAROL", "ANGELA", "RAFAL", "OLA");
+        return names.get(new Random().nextInt(names.size()));
+    }
+
+    private String surNameGenerator() {
+        List<String> names = List.of("KOWALSKI", "SZOT", "CICHON", "SKRZAT");
+        return names.get(new Random().nextInt(names.size()));
+    }
+
+
+    private void customerDataInitManualFill() {
+        System.out.println("LOADING MANUAL PROGRAM TO UPDATE DATA_BASE");
+        int numberOfRecords = DataManager.getInt("PRESS NUMBER OF RECORD YOU WANNA ADD TO DB");
+
+        for (int i = 1; i <= numberOfRecords; i++) {
+            singleCountryRecordCreator();
+        }
+        System.out.println("LOADING DATA COMPLETED ----> BELOW ALL RECORDS");
+        printAllCustomersFormDb();
+    }
+
+    public void printAllCustomersFormDb() {
+        customerRepository.findAll().forEach((s -> System.out.println(s + "\n")));
     }
 
 

@@ -6,20 +6,19 @@ import com.app.repo.generic.TradeRepository;
 import com.app.repo.impl.TradeRepositoryImpl;
 import com.app.service.dataUtility.DataManager;
 import com.app.service.valid.TradeValidator;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-
+@RequiredArgsConstructor
 public class TradeService {
 
     TradeRepository tradeRepository = new TradeRepositoryImpl("HBN");
     TradeValidator tradeValidator = new TradeValidator();
 
-    public TradeService() {
 
-    }
 
     private Trade addCategoryToDB(Trade trade) {
 

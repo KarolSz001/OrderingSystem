@@ -6,11 +6,12 @@ import com.app.repo.generic.CategoryRepository;
 import com.app.repo.impl.CategoryRepositoryImpl;
 import com.app.service.dataUtility.DataManager;
 import com.app.service.valid.CategoryValidator;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-
+@RequiredArgsConstructor
 public class CategoryService {
 
 
@@ -18,8 +19,6 @@ public class CategoryService {
     private final CategoryValidator categoryValidator = new CategoryValidator();
 
 
-    public CategoryService() {
-    }
 
     private Category addCategoryToDB(Category category) {
         if (category == null) {

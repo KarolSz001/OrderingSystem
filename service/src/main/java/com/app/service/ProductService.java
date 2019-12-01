@@ -11,20 +11,20 @@ import com.app.repo.generic.ProductRepository;
 import com.app.repo.impl.ProductRepositoryImpl;
 import com.app.service.dataUtility.DataManager;
 import com.app.service.valid.ProductValidator;
+import lombok.RequiredArgsConstructor;
 
-import java.beans.BeanInfo;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-
+@RequiredArgsConstructor
 public class ProductService {
 
     private final ProductValidator productValidator = new ProductValidator();
     private final ProductRepository productRepository = new ProductRepositoryImpl("HBN");
     private final CategoryService categoryService = new CategoryService();
-    private final StockService stockService = new StockService();
     private final ProducerService producerService = new ProducerService();
+
 
 
     public Product addProductToDB(Product product) {
@@ -45,8 +45,9 @@ public class ProductService {
     }
 
     public void productInit() {
-
+        System.out.println("check !!!!");
         String answer = DataManager.getLine("WELCOME TO PRODUCT DATA PANEL GENERATOR PRESS Y IF YOU WANNA PRESS DATA AUTOMATE OR N IF YOU WANNA FILL THEM IN MANUAL");
+
         if (answer.toUpperCase().equals("Y")) {
             productInitAuto();
         } else {
@@ -58,8 +59,9 @@ public class ProductService {
         generateProductAutoMode();
         printProductRecordsFromDB();
     }
-    private void printProductRecordsFromDB(){
-        productRepository.findAll().forEach((s)-> System.out.println(s + "\n"));
+
+    private void printProductRecordsFromDB() {
+        productRepository.findAll().forEach((s) -> System.out.println("\n" + s));
     }
 
     private void productInitManual() {
@@ -74,26 +76,39 @@ public class ProductService {
     }
 
 
-    private Product generateProductAutoMode() {
-        Producer producer = producerService.findRandomProducerFromDb();
-        Set<GuaranteeComponents> components = Set.of(GuaranteeComponents.getRandomComponent());
-        Category category = categoryService.findRandomCategoryFromDB();
-        String productName = generateProductName();
-        BigDecimal price = generateProductPrice();
+    private void generateProductAutoMode() {
+        for (int i = 1; i <= 4; i++) {
 
-        return Product.builder().name(productName).price(price).producer(producer).components(components).category(category).build();
+            Producer producer = producerService.findRandomProducerFromDb();
+            Set<GuaranteeComponents> components = Set.of(GuaranteeComponents.getRandomComponent());
+            Category category = categoryService.findRandomCategoryFromDB();
+            String productName = generateProductName();
+            BigDecimal price = generateProductPrice();
+            Product product = Product.builder().name(productName).price(price).producer(producer).components(components).category(category).build();
+            addProductToDB(product);
+        }
     }
+
 
     private String generateProductName() {
         List<String> nameList = List.of("BANAN", "ORANGE", "TV", "KAVASAKI", "HONDA");
         return nameList.get(new Random().nextInt(nameList.size() - 1));
     }
-    private BigDecimal generateProductPrice(){
-        return new BigDecimal(new Random().nextInt(400-100) + 100);
+
+    private BigDecimal generateProductPrice() {
+        return new BigDecimal(new Random().nextInt(400 - 100) + 100);
+    }
+
+    public Product findRandomProductFromDb() {
+        List<Product> products = productRepository.findAll();
+        System.out.println(products);
+//        return products.get(new Random().nextInt(products.size()-1));
+        return Product.builder().build();
     }
 
 
     public Product singleProducerRecordCreator() {
+
         String productName = DataManager.getLine("PRESS PRODUCT NAME");
         BigDecimal price = BigDecimal.valueOf(DataManager.getInt("PRESS PRICE"));
         Category category = categoryService.findRandomCategoryFromDB();
@@ -124,13 +139,13 @@ public class ProductService {
         return productRepository.findByName(productName).orElseThrow(() -> new AppException("NO RECORD IN DB"));
     }
 
-    public void decreaseQuantityOfProductInStock(String productName, Integer quantity) {
-        Long idProductInStock = productRepository.getIdProductInStock(productName).orElseThrow(() -> new AppException("NO RECORD IN DB"));
-        Stock stock = stockRepository.findOne(idProductInStock).orElseThrow(() -> new AppException("NO RECORD IN DB"));
-        Integer quantityProductInStock = getQuantityOfProductInStock(productName) - quantity;
-        stock.setQuantity(quantityProductInStock);
-        stockRepository.addOrUpdate(stock);// is it ok, means update quantity in previous record
 
+    public Product findProductById(Long id) {
+        return productRepository.findOne(id).orElseThrow(() -> new AppException("NO RECORD IN DB"));
+    }
+
+    public Long getIdProductInStock(String name) {
+        return productRepository.getIdProductInStock(name).orElseThrow(() -> new AppException("NO FOUND RECORD IN DB"));
     }
 
 }

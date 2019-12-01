@@ -1,7 +1,5 @@
 package com.app.repo.impl;
 
-
-
 import com.app.model.Trade;
 import com.app.repo.generic.AbstractCrudRepository;
 import com.app.repo.generic.TradeRepository;
@@ -29,7 +27,7 @@ public class TradeRepositoryImpl extends AbstractCrudRepository<Trade, Long> imp
             tx.begin();
 
             tradeByName = em
-                    .createQuery("select c from Customer c where c.name = :name", Trade.class)
+                    .createQuery("select t from Trade t where t.name = :name", Trade.class)
                     .setParameter("name", name)
                     .getResultStream().findFirst();
 

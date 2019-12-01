@@ -7,20 +7,19 @@ import com.app.repo.generic.CountryRepository;
 import com.app.repo.impl.CountryRepositoryImpl;
 import com.app.service.dataUtility.DataManager;
 import com.app.service.valid.CountryValidator;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-
+@RequiredArgsConstructor
 public class CountryService {
 
 
     CountryRepository countryRepository = new CountryRepositoryImpl("HBN");
     CountryValidator countryValidator = new CountryValidator();
 
-    public CountryService() {
 
-    }
 
     private Country addCountryToDB(Country country) {
 
@@ -123,4 +122,6 @@ public class CountryService {
         } else
             return countries.get(new Random().nextInt(countries.size()));
     }
+
+
 }
