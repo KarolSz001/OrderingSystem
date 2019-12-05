@@ -53,13 +53,13 @@ public class TradeService {
     }
 
     public void printAllRecordsInTrades() {
-        System.out.println("LOADING DATA COMPLETED ----> BELOW ALL RECORDS");
+        System.out.println("\n LOADING DATA COMPLETED ----> BELOW ALL RECORDS ");
         tradeRepository.findAll().forEach((s)-> System.out.println(s + "\n"));
     }
 
     public void tradeInit() {
-        String answer = DataManager.getLine("WELCOME TO TRADE DATA PANEL GENERATOR PRESS Y IF YOU WANNA PRESS DATA MANUALLY OR N IF YOU WANNA FILL THEM IN AUTOMATE");
 
+        String answer = DataManager.getLine("\n WELCOME TO TRADE DATA PANEL GENERATOR PRESS Y IF YOU WANNA PRESS DATA MANUALLY OR N IF YOU WANNA FILL THEM IN AUTOMATE ");
         if (answer.toUpperCase().equals("Y")) {
             tradeDataInitAutoFill();
         } else {
@@ -74,27 +74,26 @@ public class TradeService {
 
     private void tradeDataInitManualFill() {
 
-        System.out.println("LOADING MANUAL PROGRAM TO UPDATE DATA_BASE");
-        int numberOfRecords = DataManager.getInt("PRESS NUMBER OF RECORD YOU WANNA ADD TO DB");
+        System.out.println("\n LOADING MANUAL PROGRAM TO UPDATE DATA_BASE ");
+        int numberOfRecords = DataManager.getInt("\n PRESS NUMBER OF RECORD YOU WANNA ADD TO DB ");
 
         for (int i = 1; i <= numberOfRecords; i++) {
             singleTradeRecordCategory();
         }
-        System.out.println("LOADING DATA COMPLETED ----> BELOW ALL RECORDS");
         printAllRecordsInTrades();
     }
 
-    private Trade singleTradeRecordCategory() {
-        String name = DataManager.getLine("PRESS CATEGORY NAME");
+    private void singleTradeRecordCategory() {
+        String name = DataManager.getLine(" PRESS TRADE NAME ");
         Trade trade = Trade.builder().name(name).build();
         tradeValidator.validate(trade);
         if (tradeValidator.hasErrors()) {
-            throw new AppException("VALID DATA IN COUNTRY CREATOR");
+            throw new AppException(" VALID DATA IN TRADE CREATOR ");
         }
-        return trade;
+       addCategoryToDB(trade);
     }
 
     public Trade findTradeByName(String name){
-        return tradeRepository.findByName(name).orElseThrow(()->new AppException("NO RECORDS FOUND IN DB"));
+        return tradeRepository.findByName(name).orElseThrow(()->new AppException("\n NO RECORDS FOUND IN DB "));
     }
 }

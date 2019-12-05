@@ -61,13 +61,19 @@ public class OrderService {
 
 
     private void generateOrderAutoMode() {
-        for (int i = 1; i < 4; i++) {
-            Customer customer = customerService.findRandomCustomerFromDb();
+        for (int i = 1; i <= 1; i++) {
+            Customer customer = customerService.findRandomCustomerFromDb();;
             BigDecimal discount = generateDiscount();
             Product product = productService.findRandomProductFromDb();
-            CustomerOrder customerOrder = CustomerOrder.builder().customer(customer).date(LocalDate.now()).discount(discount).quantity(1).payment(Payment.builder().payment(EPayment.CARD).build()).product(product).build();
+            EPayment ePayment = EPayment.findRandomPayment();
+            Payment payment = Payment.builder().payment(ePayment).build();
+            CustomerOrder customerOrder = CustomerOrder.builder().customer(customer).date(LocalDate.now()).discount(discount).quantity(getNumberOfQuantity()).payment(payment).product(product).build();
+            System.out.println(customerOrder);
             addOrderToDB(customerOrder);
         }
+    }
+    private Integer getNumberOfQuantity(){
+        return new Random().nextInt(4);
     }
 
     private BigDecimal generateDiscount(){

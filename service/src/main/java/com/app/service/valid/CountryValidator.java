@@ -21,7 +21,7 @@ public class CountryValidator extends AbstractValidator<Country>  {
             err.put("Error nr 1", "Name only work with UpCase Letters and SPACE");
         }
         if (!isNameLengthCorrect(country.getName())) {
-            err.put("Error nr 3", "Name is too short");
+            err.put("Error nr 2", "Name is too short");
         }
         return err;
     }

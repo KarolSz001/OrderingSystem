@@ -45,9 +45,9 @@ public class ProductService {
     }
 
     public void productInit() {
+
         System.out.println("check !!!!");
         String answer = DataManager.getLine("WELCOME TO PRODUCT DATA PANEL GENERATOR PRESS Y IF YOU WANNA PRESS DATA AUTOMATE OR N IF YOU WANNA FILL THEM IN MANUAL");
-
         if (answer.toUpperCase().equals("Y")) {
             productInitAuto();
         } else {
@@ -75,10 +75,8 @@ public class ProductService {
         printProductRecordsFromDB();
     }
 
-
     private void generateProductAutoMode() {
         for (int i = 1; i <= 4; i++) {
-
             Producer producer = producerService.findRandomProducerFromDb();
             Set<GuaranteeComponents> components = Set.of(GuaranteeComponents.getRandomComponent());
             Category category = categoryService.findRandomCategoryFromDB();
@@ -88,7 +86,6 @@ public class ProductService {
             addProductToDB(product);
         }
     }
-
 
     private String generateProductName() {
         List<String> nameList = List.of("BANAN", "ORANGE", "TV", "KAVASAKI", "HONDA");
@@ -101,9 +98,7 @@ public class ProductService {
 
     public Product findRandomProductFromDb() {
         List<Product> products = productRepository.findAll();
-        System.out.println(products);
-//        return products.get(new Random().nextInt(products.size()-1));
-        return Product.builder().build();
+        return products.get(new Random().nextInt(products.size()-1));
     }
 
 

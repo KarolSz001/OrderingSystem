@@ -71,7 +71,6 @@ public class ShopService {
             singleShopRecordCreator();
         }
 
-        System.out.println("LOADING DATA COMPLETED ----> BELOW ALL RECORDS");
         printAllShopRecordsInDB();
     }
 
@@ -79,7 +78,7 @@ public class ShopService {
 
         String name = DataManager.getLine("PRESS SHOP NAME");
         countryService.printAllRecordsInCountries();
-        Country country = countryService.findCountryByName(name);
+        Country country = countryService.findRandomCountryFromDB();
         Shop shop = Shop.builder().name(name).country(country).build();
 
         shopValidator.validate(shop);

@@ -33,31 +33,28 @@ public class ProducerService {
         return producerRepository.addOrUpdate(producer).orElseThrow(() -> new AppException("NO RECORD IN DB"));
     }
 
-    private boolean isProducerAlreadyInDB(Producer producer) {
+    private boolean isProducerAlreadyInDB(String producerName) {
+       return !producerRepository.findByName(producerName).isEmpty();
 
-        String nameInDB = producer.getName();
-        Producer producerInDB = producerRepository.findByName(nameInDB).orElseThrow(() -> new AppException("NO RECORD IN DB"));
-        String tradeInDb = producerInDB.getTrade().getName();
+        /*String tradeInDb = producerInDB.getTrade().getName();
         String countryInDb = producerInDB.getCountry().getName();
-        return producer.getTrade().getName().equals(tradeInDb) && producer.getCountry().getName().equals(countryInDb);
+        return producer.getTrade().getName().equals(tradeInDb) && producer.getCountry().getName().equals(countryInDb);*/
     }
 
 
     public void generateProducersInDB() {
-
         List<String> producerNames = List.of("DANONE", "IBM", "MOTOROLA", "TREC");
 
         for (String name : producerNames) {
             Country country = countryService.findRandomCountry();
             Trade trade = tradeService.findRandomTradeInDB();
             Producer producer = Producer.builder().name(name).country(country).trade(trade).build();
+            if(isProducerAlreadyInDB(name))
             addProducerToDB(producer);
         }
     }
 
-
     public void producerInit() {
-
         String answer = DataManager.getLine("WELCOME TO PRODUCER DATA PANEL GENERATOR PRESS Y IF YOU WANNA PRESS DATA AUTOMATE OR N IF YOU WANNA FILL THEM IN MANUAL");
         if (answer.toUpperCase().equals("Y")) {
             producerInitAuto();
@@ -77,22 +74,17 @@ public class ProducerService {
     }
 
     private void producerInitManual() {
-
         System.out.println("LOADING MANUAL PROGRAM TO UPDATE DATA_BASE");
         int numberOfRecords = DataManager.getInt("PRESS NUMBER OF PRODUCERS YOU WANNA ADD TO DB");
-
         for (int i = 1; i <= numberOfRecords; i++) {
             singleProducerRecordCreator();
         }
-        System.out.println("LOADING DATA COMPLETED ----> BELOW ALL RECORDS OF PRODUCERS");
         printProducerRecordsFromDB();
     }
 
     private Producer singleProducerRecordCreator() {
         String producerName = DataManager.getLine("PRESS PRODUCER NAME");
-        countryService.printAllRecordsInCountries();
-        Country country = countryService.findCountryByName(DataManager.getLine("PRESS COUNTRY NAME"));
-        tradeService.printAllRecordsInTrades();
+        Country country = countryService.findRandomCountryFromDB();
         Trade trade = tradeService.findTradeByName(DataManager.getLine("PRESS TRADE NAME"));
         Producer producer = Producer.builder().name(producerName).country(country).trade(trade).build();
 

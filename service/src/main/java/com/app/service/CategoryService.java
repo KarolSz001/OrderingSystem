@@ -11,13 +11,13 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+
 @RequiredArgsConstructor
 public class CategoryService {
 
 
     private final CategoryRepository categoryRepository = new CategoryRepositoryImpl("HBN");
     private final CategoryValidator categoryValidator = new CategoryValidator();
-
 
 
     private Category addCategoryToDB(Category category) {
@@ -38,12 +38,6 @@ public class CategoryService {
         );
 
         for (Category category : categories) {
-
-            categoryValidator.validate(category);
-            if (categoryValidator.hasErrors()) {
-                throw new AppException("ERROR IN CATEGORY VALIDATION");
-            }
-
             Optional<Category> categoryByName = categoryRepository.findByName(category.getName());
             if (categoryByName.isEmpty())
                 addCategoryToDB(category);
@@ -58,13 +52,12 @@ public class CategoryService {
     }
 
     public void printAllRecordsInCategories() {
-        System.out.println("LOADING DATA COMPLETED ----> BELOW ALL RECORDS");
-        categoryRepository.findAll().forEach((s)-> System.out.println(s + "\n"));
+        System.out.println("\n LOADING DATA COMPLETED ----> BELOW ALL RECORDS");
+        categoryRepository.findAll().forEach((s) -> System.out.println(s + "\n"));
     }
 
-    public void categoryInit() {
+    public void categoryInit() throws AppException {
         String answer = DataManager.getLine("WELCOME TO CATEGORY DATA PANEL GENERATOR PRESS Y IF YOU WANNA PRESS DATA MANUALLY OR N IF YOU WANNA FILL THEM IN AUTOMATE");
-
         if (answer.toUpperCase().equals("Y")) {
             categoryDataInitAutoFill();
         } else {
@@ -77,7 +70,7 @@ public class CategoryService {
         printAllRecordsInCategories();
     }
 
-    private void categoryDataInitManualFill() {
+    private void categoryDataInitManualFill() throws AppException {
 
         System.out.println("LOADING MANUAL PROGRAM TO UPDATE DATA_BASE");
         int numberOfRecords = DataManager.getInt("PRESS NUMBER OF RECORD YOU WANNA ADD TO DB");
@@ -85,20 +78,26 @@ public class CategoryService {
         for (int i = 1; i <= numberOfRecords; i++) {
             singleCategoryRecordCreator();
         }
-
         System.out.println("LOADING DATA COMPLETED ----> BELOW ALL RECORDS");
         printAllRecordsInCategories();
     }
 
-    private Category singleCategoryRecordCreator() {
+    private void singleCategoryRecordCreator() throws AppException {
 
         String name = DataManager.getLine("PRESS CATEGORY NAME");
         Category category = Category.builder().name(name).build();
         categoryValidator.validate(category);
+
+        System.out.println(categoryValidator.hasErrors());
         if (categoryValidator.hasErrors()) {
             throw new AppException("VALID DATA IN COUNTRY CREATOR");
+
+        } else if (findCategoryByNameInDb(category.getName()).isEmpty()) {
+            addCategoryToDB(category);
         }
-        return category;
     }
 
+    private Optional<Category> findCategoryByNameInDb(String name) {
+        return categoryRepository.findByName(name);
+    }
 }
