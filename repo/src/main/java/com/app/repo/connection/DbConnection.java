@@ -5,10 +5,19 @@ import javax.persistence.Persistence;
 
 public class DbConnection {
     private final EntityManagerFactory entityManagerFactory;
+    private static DbConnection instance;
 
-    public DbConnection(String persistenceUnit) {
+    private DbConnection(String persistenceUnit) {
         this.entityManagerFactory = Persistence.createEntityManagerFactory(persistenceUnit);
     }
+
+
+
+    public static DbConnection getInstance(String persistenceUnit){
+        if(instance == null)
+            instance = new DbConnection(persistenceUnit);
+        return instance;
+     }
 
     public EntityManagerFactory getEntityManagerFactory() {
         return entityManagerFactory;

@@ -20,7 +20,7 @@ public abstract class AbstractCrudRepository<T, ID> implements CrudRepository<T,
     protected final EntityManagerFactory emf;
 
     public AbstractCrudRepository(String persistenceUnit) {
-        emf = new DbConnection(persistenceUnit).getEntityManagerFactory();
+        emf = DbConnection.getInstance(persistenceUnit).getEntityManagerFactory();
     }
 
 
