@@ -66,7 +66,7 @@ public class ProducerService {
         producerRepository.findAll().forEach((s) -> System.out.println(s + "\n"));
     }
 
-    private void producerInitAuto() {
+    public void producerInitAuto() {
         generateProducersInDB();
         printProducerRecordsFromDB();
     }

@@ -61,7 +61,7 @@ public class ShopService {
         shopRepository.findAll().forEach((s) -> System.out.println(s + "\n"));
     }
 
-    private void shopDataInitAutoFill() {
+    public void shopDataInitAutoFill() {
         generateShopsInDB();
         printAllShopRecordsInDB();
     }

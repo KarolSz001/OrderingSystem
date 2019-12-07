@@ -6,9 +6,10 @@ import com.app.service.valid.*;
 
 public class App {
 
-    public static void main(String[] args) {
+    private final static String persistenceUnit = "HBN";
 
-        String persistenceUnit = "HBN";
+
+    public static void main(String[] args) {
 
         StringBuilder sb = new StringBuilder();
         sb.append(" ----------------------------------------------------------------------------- \n");
@@ -47,7 +48,7 @@ public class App {
 
         var customerRepository = new CustomerRepositoryImpl(persistenceUnit);
         var customerValidator = new CustomerValidator();
-        var customerService = new CustomerService( countryService, customerRepository, customerValidator);
+        var customerService = new CustomerService(countryService, customerRepository, customerValidator);
 
         var customerOrderRepository = new CustomerOrderRepositoryImpl(persistenceUnit);
         var orderValidator = new OrderValidator();
@@ -57,7 +58,7 @@ public class App {
 
         var controlService = new ControlService(categoryService, tradeService, countryService, shopService, producerService, productService, stockService, customerService, orderService, solutionService);
 
-        controlService.controlRun();
+        controlService.controlLoop();
 
 
     }

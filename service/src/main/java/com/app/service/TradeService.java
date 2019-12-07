@@ -70,7 +70,7 @@ public class TradeService {
         }
     }
 
-    private void tradeDataInitAutoFill() {
+    public void tradeDataInitAutoFill() {
         createTradesInDb();
         printAllRecordsInTrades();
     }

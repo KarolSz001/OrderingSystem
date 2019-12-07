@@ -71,7 +71,7 @@ public class StockService {
         stockRepository.findAll().forEach((s) -> System.out.println(s + "\n"));
     }
 
-    private void stockDataInitAutoFill() {
+    public void stockDataInitAutoFill() {
         generateStockInDBAutoMode();
         printAllStockRecordsInDB();
     }

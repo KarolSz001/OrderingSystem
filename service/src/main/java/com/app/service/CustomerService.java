@@ -80,7 +80,7 @@ public class CustomerService {
         }
     }
 
-    private void customerDataInitAutoFill() {
+    public void customerDataInitAutoFill() {
         createCustomerInDbAuto();
         printAllCustomersFormDb();
     }
@@ -112,7 +112,7 @@ public class CustomerService {
     }
 
 
-    private void customerDataInitManualFill() {
+    public void customerDataInitManualFill() {
         System.out.println("LOADING MANUAL PROGRAM TO UPDATE DATA_BASE");
         int numberOfRecords = DataManager.getInt("PRESS NUMBER OF RECORD YOU WANNA ADD TO DB");
 

@@ -67,7 +67,7 @@ public class CategoryService {
         }
     }
 
-    private void categoryDataInitAutoFill() {
+    public void categoryDataInitAutoFill() {
         createCategoriesInDB();
         printAllRecordsInCategories();
     }

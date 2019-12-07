@@ -73,7 +73,7 @@ public class CountryService {
         }
     }
 
-    private void countryDataInitAutoFill() {
+    public void countryDataInitAutoFill() {
         createCountriesInDb();
         printAllRecordsInCountries();
     }

@@ -47,7 +47,7 @@ public class OrderService {
         }
     }
 
-    private void orderInitAuto() {
+    void orderInitAuto() {
         generateOrderAutoMode();
         printOrderRecordsFromDB();
     }

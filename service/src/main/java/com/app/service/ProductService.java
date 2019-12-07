@@ -55,7 +55,7 @@ public class ProductService {
         }
     }
 
-    private void productInitAuto() {
+    void productInitAuto() {
         generateProductAutoMode();
         printProductRecordsFromDB();
     }

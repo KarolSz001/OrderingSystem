@@ -7,6 +7,8 @@ import com.app.service.dataUtility.DataManager;
 
 public class ControlService {
 
+    private final static StringBuilder sb = new StringBuilder();
+
     CategoryService categoryService;
     TradeService tradeService;
     CountryService countryService;
@@ -17,6 +19,8 @@ public class ControlService {
     CustomerService customerService;
     OrderService orderService;
     SolutionService solutionService;
+
+
 
     public ControlService(CategoryService categoryService, TradeService tradeService, CountryService countryService, ShopService shopService, ProducerService producerService, ProductService productService, StockService stockService, CustomerService customerService, OrderService orderService, SolutionService solutionService) {
         this.categoryService = categoryService;
@@ -31,42 +35,13 @@ public class ControlService {
         this.solutionService = solutionService;
     }
 
-    public void controlRun() {
-        initDataInDB();
-//        initSolution();
-    }
 
-    public void initSolution() {
 
-        System.out.println("1. Download from the database full information about the products with the highest price in each category. " +
-                "The information includes the product name, product price, product category, manufacturer's name, " +
-                "country where the product was manufactured and the number of items in which this product was ordered.");
+    private void initSolution() {
 
-        System.out.println("2. Downloading from the database a list of all products that were ordered by customers from a country " +
-                "with the name given by the user and age within the range specified by the user. Products should be ordered in descending order of price. " +
-                "The information includes the product name, product price, product category, manufacturer's name and country in which the product was produced. ");
-
-        System.out.println("3. Retrieve from the database a list of products that is covered by the warranty and which under the warranty have services provided by the user. " +
-                "Group these products by category. ");
-
-        System.out.println("4. Retrieving from the database a list of stores that have products in the warehouse whose country of origin is different from the countries in " +
-                "which the store's branches are present.");
-
-        System.out.println("5. Download from the database of manufacturers with the name of the industry given by the user, who produced products with a total number of pieces" +
-                " greater than the number provided by the user. ");
-
-        System.out.println("6. Downloading from the database of orders that was placed within the date range from the user about the amount of the order (including the discount) \"+\n" +
-                "                 \"greater than the value provided by the user.");
-
-        System.out.println("7. Retrieving from the database a list of products ordered by the customer with the name, surname and name of the country of origin taken from the user. \"+\n" +
-                "                 \"Products should be grouped according to the producer who produced the product.");
-
-        System.out.println("8. Retrieve from the database a list of those customers who have ordered at least one product from the same country as the customer. Customer information " +
-                "should include name, surname, age, name of the customer's country of origin, and quantity of products ordered from a country other than " +
-                "the country of the customer.");
+        printSolutionDescription();
 
         int choice = DataManager.getInt("PRESS NUMBER OF RESULT YOU WANT TO GET");
-
         switch (choice) {
             case 1: {
                 solutionService.solution1();
@@ -101,29 +76,122 @@ public class ControlService {
                 break;
             }
         }
+    }
+
+    private void printSolutionDescription() {
+
+        sb.setLength(0);
+        sb.append("-----------------------------------------------------------------------------\n");
+        sb.append("1. Download from the database full information " +
+                "about the products with the highest price in each category");
+
+        sb.append("2. Downloading from the database a list of all " +
+                "products that were ordered by customers from a country");
+
+        sb.append("3. Retrieve from the database a list of products that is covered by the warranty");
+
+        sb.append("4. Retrieving from the database a list of stores that have products in the warehouse" +
+                " whose country of origin is different from the countries in which the store's branches are present.");
+
+        sb.append("5. Download from the database of manufacturers with the name of the industry given " +
+                "by the user, who produced products with a total number of pieces greater than the number provided by the user. ");
+
+        sb.append("6. Downloading from the database of orders that was placed within the date range from the user " +
+                "about the amount of the order (including the discount)");
+
+        sb.append("7. Retrieving from the database a list of products ordered by the customer ");
+
+        sb.append("8. Retrieve from the database a list of those customers who have ordered at least one product from the same country as the customer ");
+        sb.append("-----------------------------------------------------------------------------\n");
+
+        System.out.println(sb.toString());
+    }
+
+    private void initDataAuto(){
+
+        categoryService.categoryDataInitAutoFill();
+        tradeService.tradeDataInitAutoFill();
+        countryService.countryDataInitAutoFill();
+
+        shopService. shopDataInitAutoFill();
+        producerService.producerInitAuto();
+        productService.productInitAuto();
+        stockService.stockDataInitAutoFill();
+
+        customerService. customerDataInitAutoFill();
+        orderService.orderInitAuto();
+
+
 
 
     }
+    private void initDataInDB() {
 
-    public void initDataInDB() {
         try {
-////////////////////////////////////////
+            System.out.println("\n --------------------->>>>>>WELCOME IN ORDERING SYSTEM MENU APPLICATION<<<<------------------------------- ");
+
             categoryService.categoryInit();
             tradeService.tradeInit();
             countryService.countryInit();
-///////////////////////////////////////////////
+
             shopService.shopInit();
             producerService.producerInit();
             productService.productInit();
             stockService.stockInit();
-//////////////////////////////////////////////
+
             customerService.customerInit();
             orderService.orderInit();
-/////////////////////////////////////////////
+
         } catch (AppException e) {
             e.printStackTrace();
             e.getMessage();
         }
+    }
 
+    public void controlLoop() {
+
+        boolean loopOn = true;
+        while (loopOn) {
+
+            startMenu();
+            Integer read = DataManager.getInt(" PRESS NUMBER TO MAKE A CHOICE ");
+
+            switch (read) {
+                case 0: {
+                    printExit();
+                    return;
+                }
+                case 1: {
+                    initDataInDB();
+                    break;
+                }
+                case 2: {
+                    initDataAuto();
+                    break;
+                }
+                case 3: {
+                    initSolution();
+                    break;
+                }
+            }
+        }
+    }
+
+
+
+    private void printExit() {
+        System.out.println(" EXIT APPLICATION - GOODBYE \n");
+    }
+
+    private void startMenu() {
+        sb.setLength(0);
+        sb.append("-----------------------------------------------------------------------------\n");
+        sb.append(" MAIN LOOP MENU \n");
+        sb.append(" 0 - EXIT PROGRAM \n");
+        sb.append(" 1 - INITIALIZATION DATA IN DATABASE BY USER \n");
+        sb.append(" 2 - INITIALIZATION DATA IN DATABASE AUTOMATE GENERATE DATA \n");
+        sb.append(" 3 - SEND QUERY \n");
+        sb.append("-----------------------------------------------------------------------------\n");
+        System.out.println(sb.toString());
     }
 }
