@@ -7,20 +7,29 @@ import com.app.service.dataUtility.DataManager;
 
 public class ControlService {
 
-        CategoryService categoryService = new CategoryService();
-    TradeService tradeService = new TradeService();
-    CountryService countryService = new CountryService();
-////    ///////////////////////////////////////////////////////////
-    ShopService shopService = new ShopService();
-    ProducerService producerService = new ProducerService();
-    ProductService productService = new ProductService();
-    StockService stockService = new StockService();
-//    //////////////////////////////////////////////////////////////
-    CustomerService customerService = new CustomerService();
-    OrderService orderService = new OrderService();
-    //////////////////////////////////
-    SolutionService solutionService = new SolutionService();
+    CategoryService categoryService;
+    TradeService tradeService;
+    CountryService countryService;
+    ShopService shopService;
+    ProducerService producerService;
+    ProductService productService;
+    StockService stockService;
+    CustomerService customerService;
+    OrderService orderService;
+    SolutionService solutionService;
 
+    public ControlService(CategoryService categoryService, TradeService tradeService, CountryService countryService, ShopService shopService, ProducerService producerService, ProductService productService, StockService stockService, CustomerService customerService, OrderService orderService, SolutionService solutionService) {
+        this.categoryService = categoryService;
+        this.tradeService = tradeService;
+        this.countryService = countryService;
+        this.shopService = shopService;
+        this.producerService = producerService;
+        this.productService = productService;
+        this.stockService = stockService;
+        this.customerService = customerService;
+        this.orderService = orderService;
+        this.solutionService = solutionService;
+    }
 
     public void controlRun() {
         initDataInDB();
@@ -53,47 +62,45 @@ public class ControlService {
                 "                 \"Products should be grouped according to the producer who produced the product.");
 
         System.out.println("8. Retrieve from the database a list of those customers who have ordered at least one product from the same country as the customer. Customer information " +
-                                "should include name, surname, age, name of the customer's country of origin, and quantity of products ordered from a country other than " +
-                                    "the country of the customer.");
+                "should include name, surname, age, name of the customer's country of origin, and quantity of products ordered from a country other than " +
+                "the country of the customer.");
 
         int choice = DataManager.getInt("PRESS NUMBER OF RESULT YOU WANT TO GET");
 
-        switch (choice){
-            case 1:{
-             solutionService.solution1();
+        switch (choice) {
+            case 1: {
+                solutionService.solution1();
                 break;
             }
-            case 2:{
+            case 2: {
                 solutionService.solution2();
                 break;
             }
-            case 3:{
+            case 3: {
                 solutionService.solution3();
                 break;
             }
-            case 4:{
+            case 4: {
                 solutionService.solution4();
                 break;
             }
-            case 5:{
+            case 5: {
                 solutionService.solution5();
                 break;
             }
-            case 6:{
+            case 6: {
                 solutionService.solution6();
                 break;
             }
-            case 7:{
+            case 7: {
                 solutionService.solution7();
                 break;
             }
-            case 8:{
+            case 8: {
                 solutionService.solution8();
                 break;
             }
         }
-
-
 
 
     }
@@ -101,16 +108,16 @@ public class ControlService {
     public void initDataInDB() {
         try {
 ////////////////////////////////////////
-//            categoryService.categoryInit();
-//            tradeService.tradeInit();
-//        countryService.countryInit();
+            categoryService.categoryInit();
+            tradeService.tradeInit();
+            countryService.countryInit();
 ///////////////////////////////////////////////
-//        shopService.shopInit();
-//        producerService.producerInit();
-//        productService.productInit();
-//        stockService.stockInit();
+            shopService.shopInit();
+            producerService.producerInit();
+            productService.productInit();
+            stockService.stockInit();
 //////////////////////////////////////////////
-//        customerService.customerInit();
+            customerService.customerInit();
             orderService.orderInit();
 /////////////////////////////////////////////
         } catch (AppException e) {

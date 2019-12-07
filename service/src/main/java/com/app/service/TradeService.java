@@ -12,13 +12,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-@RequiredArgsConstructor
+
 public class TradeService {
 
-    TradeRepository tradeRepository = new TradeRepositoryImpl("HBN");
-    TradeValidator tradeValidator = new TradeValidator();
+    TradeRepository tradeRepository;
+    TradeValidator tradeValidator;
 
-
+    public TradeService(TradeRepository tradeRepository, TradeValidator tradeValidator) {
+        this.tradeRepository = tradeRepository;
+        this.tradeValidator = tradeValidator;
+    }
 
     private Trade addCategoryToDB(Trade trade) {
 

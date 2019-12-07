@@ -4,27 +4,29 @@ package com.app.service;
 import com.app.exception.AppException;
 import com.app.model.Country;
 import com.app.model.Producer;
-import com.app.model.Product;
 import com.app.model.Trade;
 import com.app.repo.generic.ProducerRepository;
-import com.app.repo.impl.ProducerRepositoryImpl;
 import com.app.service.dataUtility.DataManager;
 import com.app.service.valid.ProducerValidator;
-import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-@RequiredArgsConstructor
 
 public class ProducerService {
 
-    private final ProducerRepository producerRepository = new ProducerRepositoryImpl("HBN");
-    private final TradeService tradeService = new TradeService();
-    private final ProducerValidator producerValidator = new ProducerValidator();
-    private final CountryService countryService = new CountryService();
+    private final ProducerRepository producerRepository;
+    private final TradeService tradeService;
+    private final ProducerValidator producerValidator;
+    private final CountryService countryService;
 
+    public ProducerService(ProducerRepository producerRepository, TradeService tradeService, ProducerValidator producerValidator, CountryService countryService) {
+        this.producerRepository = producerRepository;
+        this.tradeService = tradeService;
+        this.producerValidator = producerValidator;
+        this.countryService = countryService;
+    }
 
     public Producer addProducerToDB(Producer producer) {
         if (producer == null) {
@@ -35,10 +37,6 @@ public class ProducerService {
 
     private boolean isProducerAlreadyInDB(String producerName) {
        return !producerRepository.findByName(producerName).isEmpty();
-
-        /*String tradeInDb = producerInDB.getTrade().getName();
-        String countryInDb = producerInDB.getCountry().getName();
-        return producer.getTrade().getName().equals(tradeInDb) && producer.getCountry().getName().equals(countryInDb);*/
     }
 
 

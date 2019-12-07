@@ -3,22 +3,24 @@ package com.app.service;
 import com.app.exception.AppException;
 import com.app.model.Category;
 import com.app.repo.generic.CategoryRepository;
-import com.app.repo.impl.CategoryRepositoryImpl;
 import com.app.service.dataUtility.DataManager;
 import com.app.service.valid.CategoryValidator;
-import lombok.RequiredArgsConstructor;
+
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-@RequiredArgsConstructor
 public class CategoryService {
 
 
-    private final CategoryRepository categoryRepository = new CategoryRepositoryImpl("HBN");
-    private final CategoryValidator categoryValidator = new CategoryValidator();
+    private final CategoryRepository categoryRepository;
+    private final CategoryValidator categoryValidator;
 
+    public CategoryService(CategoryRepository categoryRepository, CategoryValidator categoryValidator) {
+        this.categoryRepository = categoryRepository;
+        this.categoryValidator = categoryValidator;
+    }
 
     private Category addCategoryToDB(Category category) {
         if (category == null) {

@@ -4,22 +4,24 @@ import com.app.exception.AppException;
 
 import com.app.model.Country;
 import com.app.repo.generic.CountryRepository;
-import com.app.repo.impl.CountryRepositoryImpl;
 import com.app.service.dataUtility.DataManager;
 import com.app.service.valid.CountryValidator;
-import lombok.RequiredArgsConstructor;
+
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-@RequiredArgsConstructor
 public class CountryService {
 
 
-    CountryRepository countryRepository = new CountryRepositoryImpl("HBN");
-    CountryValidator countryValidator = new CountryValidator();
+    CountryRepository countryRepository;
+    CountryValidator countryValidator;
 
+    public CountryService(CountryRepository countryRepository, CountryValidator countryValidator) {
+        this.countryRepository = countryRepository;
+        this.countryValidator = countryValidator;
+    }
 
     private Country addCountryToDB(Country country) {
 

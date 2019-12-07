@@ -4,28 +4,32 @@ import com.app.exception.AppException;
 import com.app.model.*;
 import com.app.model.enums.EPayment;
 import com.app.repo.generic.CustomerOrderRepository;
-import com.app.repo.impl.CustomerOrderRepositoryImpl;
 import com.app.service.dataUtility.DataManager;
 import com.app.service.valid.OrderValidator;
-import lombok.RequiredArgsConstructor;
+
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Random;
 
-@RequiredArgsConstructor
 public class OrderService {
 
-    private final ProductService productService = new ProductService();
-    private final StockService stockService = new StockService();
-    private final CustomerOrderRepository customerOrderRepository = new CustomerOrderRepositoryImpl("HBN");
-    private final OrderValidator orderValidator = new OrderValidator();
-    private final CustomerService customerService = new CustomerService();
+    private final ProductService productService;
+    private final StockService stockService;
+    private final CustomerOrderRepository customerOrderRepository;
+    private final OrderValidator orderValidator;
+    private final CustomerService customerService;
+
+
+    public OrderService(ProductService productService, StockService stockService, CustomerOrderRepository customerOrderRepository, OrderValidator orderValidator, CustomerService customerService) {
+        this.productService = productService;
+        this.stockService = stockService;
+        this.customerOrderRepository = customerOrderRepository;
+        this.orderValidator = orderValidator;
+        this.customerService = customerService;
+    }
 
     public CustomerOrder addOrderToDB(CustomerOrder order) {
-
-
         if (order == null) {
             throw new AppException("object is null");
         }
@@ -111,10 +115,16 @@ public class OrderService {
         Long idProductInStock = productService.getIdProductInStock(productName);
         Stock stock = stockService.findStockInDbById(idProductInStock);
         Integer quantityProductInStock = productService.getQuantityOfProductInStock(productName) - quantity;
+        if(quantityProductInStock < 0){
+            throw new AppException("THERE IS NO ENOUGH PRODUCT IN STOCK");
+        }
         stock.setQuantity(quantityProductInStock);
         stockService.addStockDb(stock);// is it ok, means update quantity in previous record
 
     }
+    /*private boolean isQuantityOrderProductCorrect(CustomerOrder order) {
+        return order.getQuantity() <= (getQuantityOfProductInStock(order.getProduct().getName()));
+    }*/
 
 
 }

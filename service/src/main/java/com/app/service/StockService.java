@@ -6,26 +6,27 @@ import com.app.model.Product;
 import com.app.model.Shop;
 import com.app.model.Stock;
 import com.app.repo.generic.StockRepository;
-import com.app.repo.impl.StockRepositoryImpl;
 import com.app.service.dataUtility.DataManager;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
+
 public class StockService {
 
-    private final ProductService productService = new ProductService();
-    private final ShopService shopService = new ShopService();
-    private final StockRepository stockRepository = new StockRepositoryImpl("HBN");
+    private final ProductService productService;
+    private final ShopService shopService;
+    private final StockRepository stockRepository;
 
-
-
+    public StockService(ProductService productService, ShopService shopService, StockRepository stockRepository) {
+        this.productService = productService;
+        this.shopService = shopService;
+        this.stockRepository = stockRepository;
+    }
 
     private Stock addRecordToStock(Stock stock) {
 
         if (stock == null) {
             throw new AppException("object is null");
         }
-        return stockRepository.addOrUpdate(stock).orElseThrow(()-> new AppException("NO FOUND RECORD"));
+        return stockRepository.addOrUpdate(stock).orElseThrow(() -> new AppException("NO FOUND RECORD"));
     }
 
     public Stock singleStockRecordCreator() {
@@ -53,7 +54,7 @@ public class StockService {
     public Stock addStockDb(Stock stock) {
         return stockRepository.addOrUpdate(stock).orElseThrow(() -> new AppException("NO FOUND RECORD IN DB"));
     }
-///////////////////////
+
 
     public void stockInit() {
 
@@ -93,7 +94,6 @@ public class StockService {
         for (int i = 1; i <= numberOfRecords; i++) {
             singleStockRecordCreator();
         }
-
         System.out.println("LOADING DATA COMPLETED ----> BELOW ALL RECORDS");
         printAllStockRecordsInDB();
     }

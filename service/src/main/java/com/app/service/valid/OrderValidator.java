@@ -1,10 +1,7 @@
 package com.app.service.valid;
 
 import com.app.model.CustomerOrder;
-import com.app.model.Product;
-import com.app.service.ProductService;
-import com.app.service.StockService;
-import com.mysql.cj.x.protobuf.MysqlxCrud;
+
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -13,8 +10,6 @@ import java.util.Map;
 
 public class OrderValidator extends AbstractValidator<CustomerOrder> {
 
-
-    private final ProductService productService = new ProductService();
 
     @Override
     public Map<String, String> validate(CustomerOrder customerOrder) {
@@ -27,9 +22,7 @@ public class OrderValidator extends AbstractValidator<CustomerOrder> {
         if (!isDiscountNumberCorrect(customerOrder.getDiscount())) {
             err.put("Error nr 2", "Name is too short");
         }
-        if (!isQuantityOrderProductCorrect(customerOrder)) {
-            err.put("Error nr 3", "Quantity number is Valid");
-        }
+
         return err;
     }
 
@@ -42,10 +35,9 @@ public class OrderValidator extends AbstractValidator<CustomerOrder> {
 
     }
 
-    private boolean isQuantityOrderProductCorrect(CustomerOrder order) {
-        return order.getQuantity() <= (productService.getQuantityOfProductInStock(order.getProduct().getName()));
+
 
     }
 
 
-}
+

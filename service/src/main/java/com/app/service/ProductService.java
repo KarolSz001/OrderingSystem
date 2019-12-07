@@ -2,30 +2,30 @@ package com.app.service;
 
 
 import com.app.exception.AppException;
-import com.app.model.Category;
-import com.app.model.Producer;
-import com.app.model.Product;
-import com.app.model.Stock;
+import com.app.model.*;
 import com.app.model.enums.GuaranteeComponents;
 import com.app.repo.generic.ProductRepository;
-import com.app.repo.impl.ProductRepositoryImpl;
 import com.app.service.dataUtility.DataManager;
 import com.app.service.valid.ProductValidator;
-import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-@RequiredArgsConstructor
+
 public class ProductService {
 
-    private final ProductValidator productValidator = new ProductValidator();
-    private final ProductRepository productRepository = new ProductRepositoryImpl("HBN");
-    private final CategoryService categoryService = new CategoryService();
-    private final ProducerService producerService = new ProducerService();
+    private final ProductValidator productValidator;
+    private final ProductRepository productRepository;
+    private final CategoryService categoryService;
+    private final ProducerService producerService;
 
-
+    public ProductService(ProductValidator productValidator, ProductRepository productRepository, CategoryService categoryService, ProducerService producerService) {
+        this.productValidator = productValidator;
+        this.productRepository = productRepository;
+        this.categoryService = categoryService;
+        this.producerService = producerService;
+    }
 
     public Product addProductToDB(Product product) {
 
@@ -118,6 +118,7 @@ public class ProductService {
         if (productValidator.hasErrors()) {
             throw new AppException("ERROR IN PRODUCT VALIDATION");
         }
+
         return addProductToDB(product);
     }
 
@@ -142,5 +143,6 @@ public class ProductService {
     public Long getIdProductInStock(String name) {
         return productRepository.getIdProductInStock(name).orElseThrow(() -> new AppException("NO FOUND RECORD IN DB"));
     }
+
 
 }

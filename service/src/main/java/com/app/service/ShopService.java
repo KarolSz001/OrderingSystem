@@ -4,23 +4,26 @@ import com.app.exception.AppException;
 import com.app.model.Country;
 import com.app.model.Shop;
 import com.app.repo.generic.ShopRepository;
-import com.app.repo.impl.ShopRepositoryImpl;
 import com.app.service.dataUtility.DataManager;
 import com.app.service.valid.ShopValidator;
-import lombok.RequiredArgsConstructor;
+
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-@RequiredArgsConstructor
 public class ShopService {
 
-    private final ShopRepository shopRepository = new ShopRepositoryImpl("HBN");
-    private final CountryService countryService = new CountryService();
-    private final ShopValidator shopValidator = new ShopValidator();
+    private final ShopRepository shopRepository;
+    private final CountryService countryService;
+    private final ShopValidator shopValidator;
 
 
+    public ShopService(ShopRepository shopRepository, CountryService countryService, ShopValidator shopValidator) {
+        this.shopRepository = shopRepository;
+        this.countryService = countryService;
+        this.shopValidator = shopValidator;
+    }
 
     public Shop addShopToDB(Shop shop) {
         if (shop == null) {

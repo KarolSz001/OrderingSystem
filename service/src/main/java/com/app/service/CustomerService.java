@@ -4,7 +4,6 @@ import com.app.exception.AppException;
 import com.app.model.Country;
 import com.app.model.Customer;
 import com.app.repo.generic.CustomerRepository;
-import com.app.repo.impl.CustomerRepositoryImpl;
 import com.app.service.dataUtility.DataManager;
 import com.app.service.valid.CustomerValidator;
 
@@ -16,10 +15,15 @@ import java.util.Random;
 
 public class CustomerService {
 
-    private final CustomerRepository customerRepository = new CustomerRepositoryImpl("HBN");
-    private final CountryService countryService = new CountryService();
-    private final CustomerValidator customerValidator = new CustomerValidator();
+    private final CountryService countryService;
+    private final CustomerRepository customerRepository;
+    private final CustomerValidator customerValidator;
 
+    public CustomerService(CountryService countryService, CustomerRepository customerRepository, CustomerValidator customerValidator) {
+        this.countryService = countryService;
+        this.customerRepository = customerRepository;
+        this.customerValidator = customerValidator;
+    }
 
     public Customer addCustomerToDB(Customer customer) {
 
