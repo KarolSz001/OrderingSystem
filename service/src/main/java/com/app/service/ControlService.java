@@ -121,9 +121,6 @@ public class ControlService {
         customerService. customerDataInitAutoFill();
         orderService.orderInitAuto();
 
-
-
-
     }
     private void initDataInDB() {
 

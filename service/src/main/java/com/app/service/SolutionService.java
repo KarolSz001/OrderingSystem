@@ -3,7 +3,13 @@ package com.app.service;
 public class SolutionService {
 
 
+    public SolutionService(CategoryService categoryService, TradeService tradeService, ShopService shopService, ProducerService producerService, ProductService productService, StockService stockService, CustomerService customerService, OrderService orderService) {
+
+    }
+
     public void solution1() {
+
+
 
     }
 

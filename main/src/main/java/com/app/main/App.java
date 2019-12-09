@@ -1,5 +1,6 @@
 package com.app.main;
 
+import com.app.model.enums.GuaranteeComponents;
 import com.app.repo.impl.*;
 import com.app.service.*;
 import com.app.service.valid.*;
@@ -54,12 +55,15 @@ public class App {
         var orderValidator = new OrderValidator();
         var orderService = new OrderService(productService, stockService, customerOrderRepository, orderValidator, customerService);
 
-        var solutionService = new SolutionService();
+        var solutionService = new SolutionService(categoryService, tradeService, shopService, producerService, productService, stockService, customerService, orderService);
 
         var controlService = new ControlService(categoryService, tradeService, countryService, shopService, producerService, productService, stockService, customerService, orderService, solutionService);
 
-        controlService.controlLoop();
-
+//        controlService.controlLoop();
+//        productService.solution1();
+//        orderService.orderInitAuto();
+//        orderService.solution2("GERMAN",0,100);
+        productService.solution3(GuaranteeComponents.MONEY_BACK);
 
     }
 }

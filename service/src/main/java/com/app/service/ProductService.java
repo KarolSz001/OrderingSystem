@@ -3,15 +3,17 @@ package com.app.service;
 
 import com.app.exception.AppException;
 import com.app.model.*;
+import com.app.model.dto.Mapper;
+import com.app.model.dto.ProductDTO;
 import com.app.model.enums.GuaranteeComponents;
 import com.app.repo.generic.ProductRepository;
 import com.app.service.dataUtility.DataManager;
 import com.app.service.valid.ProductValidator;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 public class ProductService {
 
@@ -77,14 +79,21 @@ public class ProductService {
 
     private void generateProductAutoMode() {
         for (int i = 1; i <= 4; i++) {
+            Set<GuaranteeComponents> components = null;
             Producer producer = producerService.findRandomProducerFromDb();
-            Set<GuaranteeComponents> components = Set.of(GuaranteeComponents.getRandomComponent());
+            if(isGuarantee()) {
+               components = GuaranteeComponents.getRandomComponent();
+            }
             Category category = categoryService.findRandomCategoryFromDB();
             String productName = generateProductName();
             BigDecimal price = generateProductPrice();
             Product product = Product.builder().name(productName).price(price).producer(producer).components(components).category(category).build();
             addProductToDB(product);
         }
+    }
+
+    private boolean isGuarantee(){
+        return new Random().nextBoolean();
     }
 
     private String generateProductName() {
@@ -98,7 +107,7 @@ public class ProductService {
 
     public Product findRandomProductFromDb() {
         List<Product> products = productRepository.findAll();
-        return products.get(new Random().nextInt(products.size()-1));
+        return products.get(new Random().nextInt(products.size() - 1));
     }
 
 
@@ -107,7 +116,7 @@ public class ProductService {
         String productName = DataManager.getLine("PRESS PRODUCT NAME");
         BigDecimal price = BigDecimal.valueOf(DataManager.getInt("PRESS PRICE"));
         Category category = categoryService.findRandomCategoryFromDB();
-        Set<GuaranteeComponents> guaranteeComponents = Set.of(GuaranteeComponents.getRandomComponent());
+        Set<GuaranteeComponents> guaranteeComponents = GuaranteeComponents.getRandomComponent();
 
         Product product = Product.builder().name(productName).category(category).price(price).category(category).components(guaranteeComponents).build();
 
@@ -143,6 +152,38 @@ public class ProductService {
     public Long getIdProductInStock(String name) {
         return productRepository.getIdProductInStock(name).orElseThrow(() -> new AppException("NO FOUND RECORD IN DB"));
     }
+
+
+    ///////////////////////////////////////////////////////////////////
+
+    public void solution1() {
+
+        productRepository.findAll()
+                .stream().map(Mapper::fromProductToProductDTO)
+                .peek(System.out::println)
+                .collect(Collectors.groupingBy(ProductDTO::getCategoryName))
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        e -> e.getValue().stream().max(Comparator.comparing(ProductDTO::getPrice, Comparator.reverseOrder())).orElseThrow(() -> new AppException("NO RECORD FOUND"))
+                ))
+                .forEach((k,v)->System.out.println(k + "::::::" + v));
+    }
+
+    public void solution3(GuaranteeComponents... guaranteeComponents) {
+        Set componentsList = new HashSet(Arrays.asList(guaranteeComponents));
+        productRepository.findAll()
+                .stream().map(Mapper::fromProductToProductWithGuarDTO)
+//                .peek(System.out::println)
+                .filter(f->!(f.getGuaranteeComponents().isEmpty()) && f.getGuaranteeComponents().containsAll(componentsList))
+                .forEach(System.out::println);
+    }
+
+
+
+
+
 
 
 }

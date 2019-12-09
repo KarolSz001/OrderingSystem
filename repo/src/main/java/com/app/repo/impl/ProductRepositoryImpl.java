@@ -3,7 +3,6 @@ package com.app.repo.impl;
 import com.app.model.Product;
 import com.app.repo.generic.AbstractCrudRepository;
 import com.app.repo.generic.ProductRepository;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import java.util.Optional;
@@ -45,7 +44,7 @@ public class ProductRepositoryImpl extends AbstractCrudRepository<Product, Long>
         return productByName;
     }
 
-    public Optional<Integer> getQuantityOfProductInStock(String productName){
+    public Optional<Integer> getQuantityOfProductInStock(String productName) {
 
         EntityManager em = null;
         EntityTransaction tx = null;
@@ -76,7 +75,7 @@ public class ProductRepositoryImpl extends AbstractCrudRepository<Product, Long>
         return quantity;
     }
 
-    public Optional<Long> getIdProductInStock(String productName){
+    public Optional<Long> getIdProductInStock(String productName) {
 
         EntityManager em = null;
         EntityTransaction tx = null;
@@ -107,7 +106,7 @@ public class ProductRepositoryImpl extends AbstractCrudRepository<Product, Long>
         return idNumber;
     }
 
+}
 
 
 
-    }

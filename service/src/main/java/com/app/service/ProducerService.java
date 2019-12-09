@@ -1,6 +1,5 @@
 package com.app.service;
 
-
 import com.app.exception.AppException;
 import com.app.model.Country;
 import com.app.model.Producer;
@@ -47,7 +46,7 @@ public class ProducerService {
             Country country = countryService.findRandomCountry();
             Trade trade = tradeService.findRandomTradeInDB();
             Producer producer = Producer.builder().name(name).country(country).trade(trade).build();
-            if(isProducerAlreadyInDB(name))
+            if(!isProducerAlreadyInDB(name))
             addProducerToDB(producer);
         }
     }
@@ -104,7 +103,7 @@ public class ProducerService {
 
     public Producer findRandomProducerFromDb() {
         List<Producer> producers = producerRepository.findAll();
-        return producers.get(new Random().nextInt(producers.size() - 1));
+        return producers.get(new Random().nextInt(producers.size()));
     }
 
 

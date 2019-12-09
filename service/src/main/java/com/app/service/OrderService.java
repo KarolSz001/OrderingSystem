@@ -2,6 +2,8 @@ package com.app.service;
 
 import com.app.exception.AppException;
 import com.app.model.*;
+import com.app.model.dto.Mapper;
+import com.app.model.dto.ProductDTO;
 import com.app.model.enums.EPayment;
 import com.app.repo.generic.CustomerOrderRepository;
 import com.app.service.dataUtility.DataManager;
@@ -10,7 +12,10 @@ import com.app.service.valid.OrderValidator;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class OrderService {
 
@@ -47,7 +52,7 @@ public class OrderService {
         }
     }
 
-    void orderInitAuto() {
+    public void orderInitAuto() {
         generateOrderAutoMode();
         printOrderRecordsFromDB();
     }
@@ -68,7 +73,7 @@ public class OrderService {
     }
 
     private void generateOrderAutoMode() {
-        for (int i = 1; i <= 1; i++) {
+        for (int i = 1; i <= 2; i++) {
 
             Customer customer = customerService.findRandomCustomerFromDb();
             BigDecimal discount = generateDiscount();
@@ -76,7 +81,7 @@ public class OrderService {
             EPayment ePayment = EPayment.findRandomPayment();
             Payment payment = Payment.builder().payment(ePayment).build();
             CustomerOrder customerOrder = CustomerOrder.builder().customer(customer).date(LocalDate.now()).discount(discount).quantity(getNumberOfQuantity()).payment(payment).product(product).build();
-            System.out.println("RESULT " + customerOrder);
+//            System.out.println("RESULT " + customerOrder);
             addOrderToDB(customerOrder);
         }
     }
@@ -125,6 +130,18 @@ public class OrderService {
     /*private boolean isQuantityOrderProductCorrect(CustomerOrder order) {
         return order.getQuantity() <= (getQuantityOfProductInStock(order.getProduct().getName()));
     }*/
+
+    public void solution2(String customersCountryName, Integer minAge, Integer maxAge) {
+
+        customerOrderRepository.findAll()
+                .stream()
+                .filter(f->f.getCustomer().getCountry().getName().equals(customersCountryName) && f.getCustomer().getAge() > minAge && f.getCustomer().getAge() < maxAge)
+                .map(CustomerOrder::getProduct)
+                .map(Mapper::fromProductToProductDTO)
+                .sorted(Comparator.comparing(ProductDTO::getPrice,Comparator.naturalOrder()))
+                .forEach(System.out::println);
+    }
+
 
 
 }
