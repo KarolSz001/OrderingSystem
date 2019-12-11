@@ -107,4 +107,8 @@ public class ShopService {
         return shops.get(new Random().nextInt(shops.size()));
     }
 
+    public void clearDataFromShop(){
+        shopRepository.deleteAll();
+    }
+
 }

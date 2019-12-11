@@ -1,13 +1,11 @@
 package com.app.service;
 
-
 import com.app.exception.AppException;
 import com.app.model.enums.GuaranteeComponents;
 import com.app.service.dataUtility.DataManager;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-
 
 public class ControlService {
 
@@ -46,12 +44,10 @@ public class ControlService {
         switch (choice) {
             case 1: {
                 productService.solution1();
-                ;
                 break;
             }
             case 2: {
                 orderService.solution2("GERMAN", 0, 100);
-                ;
                 break;
             }
             case 3: {
@@ -63,7 +59,7 @@ public class ControlService {
                 break;
             }
             case 5: {
-                stockService.solution5("FOOD", 10);
+                stockService.solution5("FOOD", 0);
                 break;
             }
             case 6: {
@@ -85,27 +81,28 @@ public class ControlService {
 
         sb.setLength(0);
         sb.append("-----------------------------------------------------------------------------\n");
-        sb.append("1. Download from the database full information " +
-                "about the products with the highest price in each category");
+        sb.append("\n1. Download from the database full information " +
+                "           \nabout the products with the highest price in each category");
 
-        sb.append("2. Downloading from the database a list of all " +
-                "products that were ordered by customers from a country");
+        sb.append("\n2. Downloading from the database a list of all " +
+                "           \nproducts that were ordered by customers from a country");
 
-        sb.append("3. Retrieve from the database a list of products that is covered by the warranty");
+        sb.append("\n3. Retrieve from the database a list of products that is covered by the warranty");
 
-        sb.append("4. Retrieving from the database a list of stores that have products in the warehouse" +
-                " whose country of origin is different from the countries in which the store's branches are present.");
+        sb.append("\n4. Retrieving from the database a list of stores that have products in the warehouse" +
+                "           \nwhose country of origin is different from the countries in which the store's branches are present.");
 
-        sb.append("5. Download from the database of manufacturers with the name of the industry given " +
-                "by the user, who produced products with a total number of pieces greater than the number provided by the user. ");
+        sb.append("\n5. Download from the database of manufacturers with the name of the industry given " +
+                "       \nby the user, who produced products with a total number of pieces greater than the number provided by the user. ");
 
-        sb.append("6. Downloading from the database of orders that was placed within the date range from the user " +
-                "about the amount of the order (including the discount)");
+        sb.append("\n6. Downloading from the database of orders that was placed within the date range from the user " +
+                "           \nabout the amount of the order (including the discount)");
 
-        sb.append("7. Retrieving from the database a list of products ordered by the customer ");
+        sb.append("\n7. Retrieving from the database a list of products ordered by the customer ");
 
-        sb.append("8. Retrieve from the database a list of those customers who have ordered at least one product from the same country as the customer ");
-        sb.append("-----------------------------------------------------------------------------\n");
+        sb.append("\n8. Retrieve from the database a list of those customers who have ordered" +
+                "           \n at least one product from the same country as the customer ");
+        sb.append("\n-----------------------------------------------------------------------------");
 
         System.out.println(sb.toString());
     }
@@ -153,9 +150,11 @@ public class ControlService {
 
         boolean loopOn = true;
         while (loopOn) {
-
+            System.out.println("\n-----------------------------------------------------------------------------");
+            System.out.println(" OrderingSys v1.0 07.12.2019 \n ");
+            System.out.println(" Karol Szot \n");
             startMenu();
-            Integer read = DataManager.getInt(" PRESS NUMBER TO MAKE A CHOICE ");
+            var read = DataManager.getInt(" PRESS NUMBER TO MAKE A CHOICE ");
 
             switch (read) {
                 case 0: {
@@ -181,7 +180,32 @@ public class ControlService {
 
     private void printExit() {
         System.out.println(" EXIT APPLICATION - GOODBYE \n");
+        var choice = DataManager.getLine("DO YOU WANT CLEAR ALL DATA FROM DB PRESS Y OR N").toUpperCase().equals("Y") ? clearAndExit() : exit();
+
     }
+
+    private String clearAndExit() {
+        System.out.println("CLEAR DB -------------------------- IN PROGRESS");
+        categoryService.clearDataFromCategory();
+        tradeService.clearDataFromTrade();
+        countryService.clearDataFromCountry();
+
+        shopService.clearDataFromShop();
+        producerService.clearDataFromProducer();
+        productService.clearDataFromProduct();
+        stockService.clearDataFromStock();
+
+        customerService.clearDataFromCustomer();
+        orderService.clearDataFromOrder();
+
+        return "Y";
+    }
+
+    private String exit() {
+        System.out.println(" EXIT APPLICATION - GOODBYE \n");
+        return "Y";
+    }
+
 
     private void startMenu() {
         sb.setLength(0);

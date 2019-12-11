@@ -117,5 +117,9 @@ public class CountryService {
             return countries.get(new Random().nextInt(countries.size()));
     }
 
+    public void clearDataFromCountry(){
+        countryRepository.deleteAll();
+    }
+
 
 }

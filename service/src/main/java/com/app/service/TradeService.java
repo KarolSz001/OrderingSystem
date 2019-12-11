@@ -99,4 +99,8 @@ public class TradeService {
     public Trade findTradeByName(String name){
         return tradeRepository.findByName(name).orElseThrow(()->new AppException("\n NO RECORDS FOUND IN DB "));
     }
+
+    public void clearDataFromTrade(){
+        tradeRepository.deleteAll();
+    }
 }

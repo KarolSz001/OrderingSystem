@@ -106,6 +106,10 @@ public class ProducerService {
         return producers.get(new Random().nextInt(producers.size()));
     }
 
+    public void clearDataFromProducer(){
+        producerRepository.deleteAll();
+    }
+
 
 
 }

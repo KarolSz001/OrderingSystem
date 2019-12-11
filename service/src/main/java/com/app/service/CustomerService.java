@@ -127,6 +127,9 @@ public class CustomerService {
         customerRepository.findAll().forEach((s -> System.out.println(s + "\n")));
     }
 
+    public void clearDataFromCustomer(){
+        customerRepository.deleteAll();
+    }
 
 }
 

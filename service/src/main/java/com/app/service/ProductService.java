@@ -153,23 +153,20 @@ public class ProductService {
         return productRepository.getIdProductInStock(name).orElseThrow(() -> new AppException("NO FOUND RECORD IN DB"));
     }
 
+    public void clearDataFromProduct(){
+        productRepository.deleteAll();
+    }
+
 
     ///////////////////////////////////////////////////////////////////
 
     public void solution1() {
-
         productRepository.findAll()
                 .stream().map(Mapper::fromProductToProductDTO)
-                .peek(System.out::println)
-                .collect(Collectors.groupingBy(ProductDTO::getCategoryName))
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        e -> e.getValue().stream().max(Comparator.comparing(ProductDTO::getPrice, Comparator.reverseOrder())).orElseThrow(() -> new AppException("NO RECORD FOUND"))
-                ))
+                .collect(Collectors.groupingBy(ProductDTO::getCategoryName, Collectors.collectingAndThen(Collectors.maxBy(Comparator.comparing(ProductDTO::getPrice)), Optional::orElseThrow)))
                 .forEach((k, v) -> System.out.println(k + "::::::" + v));
     }
+
 
     public void solution3(GuaranteeComponents... guaranteeComponents) {
         Set componentsList = new HashSet(Arrays.asList(guaranteeComponents));
@@ -179,8 +176,6 @@ public class ProductService {
                 .filter(f -> !(f.getGuaranteeComponents().isEmpty()) && f.getGuaranteeComponents().containsAll(componentsList))
                 .forEach(System.out::println);
     }
-
-
 
 
 }

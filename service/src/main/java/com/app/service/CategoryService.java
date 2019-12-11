@@ -102,4 +102,8 @@ public class CategoryService {
     private Optional<Category> findCategoryByNameInDb(String name) {
         return categoryRepository.findByName(name);
     }
+
+    public void clearDataFromCategory(){
+        categoryRepository.deleteAll();
+    }
 }

@@ -2,12 +2,15 @@ package com.app.service;
 
 
 import com.app.exception.AppException;
+import com.app.model.Producer;
 import com.app.model.Product;
 import com.app.model.Shop;
 import com.app.model.Stock;
 import com.app.repo.generic.StockRepository;
 import com.app.service.dataUtility.DataManager;
 
+import java.lang.reflect.Array;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -98,52 +101,53 @@ public class StockService {
         printAllStockRecordsInDB();
     }
 
+    public void clearDataFromStock() {
+        stockRepository.deleteAll();
+    }
+
+    public void solution1a() {
+        stockRepository.query4();
+    }
+
     public void solution4() {
         stockRepository.query4().stream()
 //                .peek(s-> System.out.println(Arrays.toString(s)))
-                .collect(Collectors.groupingBy(e->e[0]))
+                .collect(Collectors.groupingBy(e -> e[0]))
                 .entrySet()
                 .stream()
                 .collect(Collectors.toMap(
-                        e->(Product)e.getKey(),
-                        e->e.getValue().stream().map(m->(Shop)(m[1])).collect(Collectors.toList())))
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        e->e.getValue().stream().filter(f->!f.getCountry().getName().equals(e.getKey().getProducer().getCountry().getName())).collect(Collectors.toList())
-                ))
-
-                .forEach((k,v)-> System.out.println(k.getName() + "::" + k.getProducer().getCountry().getName() + "::::::" + v));
-    }
-
-    public void solution5(String tradeName, int quantity) {
-
-        stockRepository.query4().stream()
-//                .peek(s-> System.out.println(Arrays.toString(s)))
-                .collect(Collectors.groupingBy(e->e[0]))
-                .entrySet()
-                .stream()
-                .collect(Collectors.toMap(
-                        e->(Product)e.getKey(),
-                        e->e.getValue().stream().map(m->(Shop)(m[1])).collect(Collectors.toList())))
+                        e -> (Product) e.getKey(),
+                        e -> e.getValue().stream().map(m -> (Shop) (m[1])).collect(Collectors.toList())))
                 .entrySet()
                 .stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
-                        e->e.getValue().stream().filter(f->!f.getCountry().getName().equals(e.getKey().getProducer().getCountry().getName())).collect(Collectors.toList())
+                        e -> e.getValue().stream().filter(f -> !f.getCountry().getName().equals(e.getKey().getProducer().getCountry().getName())).collect(Collectors.toList())
                 ))
 
-                .forEach((k,v)-> System.out.println(k.getName() + "::" + k.getProducer().getCountry().getName() + "::::::" + v));
+                .forEach((k, v) -> System.out.println(k.getName() + "::" + k.getProducer().getCountry().getName() + "::::::" + v));
     }
 
+    public void solution5(String tradeName, int minQuantity) {
+        stockRepository.query5(tradeName)
+                .stream()
+                .collect(Collectors.groupingBy(e -> e[0]))
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        e -> (Producer) e.getKey(),
+                        e -> e.getValue().stream().map(m -> (Integer) (m[1])).reduce(0,Integer::sum)
+                ))
+                .entrySet()
+                .stream()
+                .filter(f->f.getValue() > minQuantity)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue
+                ))
+                .forEach((k,v)-> System.out.println(k + "::::" + v));
 
-
-
-
-
-
-
+    }
 
 
 }

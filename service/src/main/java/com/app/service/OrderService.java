@@ -79,7 +79,6 @@ public class OrderService {
             EPayment ePayment = EPayment.findRandomPayment();
             Payment payment = Payment.builder().payment(ePayment).build();
             CustomerOrder customerOrder = CustomerOrder.builder().customer(customer).date(LocalDate.now()).discount(discount).quantity(getNumberOfQuantity()).payment(payment).product(product).build();
-//            System.out.println("RESULT " + customerOrder);
             addOrderToDB(customerOrder);
         }
     }
@@ -129,6 +128,9 @@ public class OrderService {
         return order.getQuantity() <= (getQuantityOfProductInStock(order.getProduct().getName()));
     }*/
 
+    public void clearDataFromOrder(){
+        customerOrderRepository.deleteAll();
+    }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public void solution2(String customersCountryName, Integer minAge, Integer maxAge) {

@@ -15,6 +15,11 @@ public class StockRepositoryImpl extends AbstractCrudRepository<Stock, Long> imp
         super(persistenceUnit);
     }
 
+    public void query1() {
+
+
+    }
+
 
     public List<Object[]> query4() {
         EntityManager em = null;
@@ -27,7 +32,7 @@ public class StockRepositoryImpl extends AbstractCrudRepository<Stock, Long> imp
             tx.begin();
 
             resultList = em
-                    .createQuery("select s.product, s.quantity from Stock s ", Object[].class)
+                    .createQuery("select p, ss from Stock s join s.product p join s.shop ss", Object[].class)
                     .getResultList();
 
             tx.commit();
@@ -45,7 +50,7 @@ public class StockRepositoryImpl extends AbstractCrudRepository<Stock, Long> imp
         return resultList;
     }
 
-    public List<Object[]> query5() {
+    public List<Object[]> query5(String tradeName) {
         EntityManager em = null;
         EntityTransaction tx = null;
         List<Object[]> resultList = null;
@@ -56,7 +61,8 @@ public class StockRepositoryImpl extends AbstractCrudRepository<Stock, Long> imp
             tx.begin();
 
             resultList = em
-                    .createQuery("select s.product, s.quantity from Stock s ", Object[].class)
+                    .createQuery("select p, s.quantity from Stock s join s.product.producer p where p.trade.name =:tradeName", Object[].class)
+                    .setParameter("tradeName", tradeName)
                     .getResultList();
 
             tx.commit();
