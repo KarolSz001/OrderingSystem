@@ -8,6 +8,10 @@ import com.app.model.Stock;
 import com.app.repo.generic.StockRepository;
 import com.app.service.dataUtility.DataManager;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 
 public class StockService {
 
@@ -41,9 +45,7 @@ public class StockService {
         Long idShop = DataManager.getLong("PRESS ID SHOP OF YOU CHOICE");
         Shop shop = shopService.findShopById(idShop);
         Integer quantityProductInStock = DataManager.getInt("PRESS NUMBER OF PRODUCT IN STOCK");
-
         Stock stock = Stock.builder().product(product).quantity(quantityProductInStock).shop(shop).build();
-
         return addRecordToStock(stock);
     }
 
@@ -77,7 +79,6 @@ public class StockService {
     }
 
     private void generateStockInDBAutoMode() {
-
         for (int i = 1; i < 4; i++) {
             Product product = productService.findRandomProductFromDb();
             Shop shop = shopService.findRandomShopFromDb();
@@ -87,7 +88,6 @@ public class StockService {
     }
 
     private void stockDataShopInitManualFill() {
-
         System.out.println("LOADING MANUAL PROGRAM TO UPDATE DATA_BASE");
         int numberOfRecords = DataManager.getInt("PRESS NUMBER OF RECORD YOU WANNA ADD TO DB");
 
@@ -97,4 +97,53 @@ public class StockService {
         System.out.println("LOADING DATA COMPLETED ----> BELOW ALL RECORDS");
         printAllStockRecordsInDB();
     }
+
+    public void solution4() {
+        stockRepository.query4().stream()
+//                .peek(s-> System.out.println(Arrays.toString(s)))
+                .collect(Collectors.groupingBy(e->e[0]))
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        e->(Product)e.getKey(),
+                        e->e.getValue().stream().map(m->(Shop)(m[1])).collect(Collectors.toList())))
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        e->e.getValue().stream().filter(f->!f.getCountry().getName().equals(e.getKey().getProducer().getCountry().getName())).collect(Collectors.toList())
+                ))
+
+                .forEach((k,v)-> System.out.println(k.getName() + "::" + k.getProducer().getCountry().getName() + "::::::" + v));
+    }
+
+    public void solution5(String tradeName, int quantity) {
+
+        stockRepository.query4().stream()
+//                .peek(s-> System.out.println(Arrays.toString(s)))
+                .collect(Collectors.groupingBy(e->e[0]))
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        e->(Product)e.getKey(),
+                        e->e.getValue().stream().map(m->(Shop)(m[1])).collect(Collectors.toList())))
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        e->e.getValue().stream().filter(f->!f.getCountry().getName().equals(e.getKey().getProducer().getCountry().getName())).collect(Collectors.toList())
+                ))
+
+                .forEach((k,v)-> System.out.println(k.getName() + "::" + k.getProducer().getCountry().getName() + "::::::" + v));
+    }
+
+
+
+
+
+
+
+
+
+
 }

@@ -81,8 +81,8 @@ public class ProductService {
         for (int i = 1; i <= 4; i++) {
             Set<GuaranteeComponents> components = null;
             Producer producer = producerService.findRandomProducerFromDb();
-            if(isGuarantee()) {
-               components = GuaranteeComponents.getRandomComponent();
+            if (isGuarantee()) {
+                components = GuaranteeComponents.getRandomComponent();
             }
             Category category = categoryService.findRandomCategoryFromDB();
             String productName = generateProductName();
@@ -92,7 +92,7 @@ public class ProductService {
         }
     }
 
-    private boolean isGuarantee(){
+    private boolean isGuarantee() {
         return new Random().nextBoolean();
     }
 
@@ -168,7 +168,7 @@ public class ProductService {
                         Map.Entry::getKey,
                         e -> e.getValue().stream().max(Comparator.comparing(ProductDTO::getPrice, Comparator.reverseOrder())).orElseThrow(() -> new AppException("NO RECORD FOUND"))
                 ))
-                .forEach((k,v)->System.out.println(k + "::::::" + v));
+                .forEach((k, v) -> System.out.println(k + "::::::" + v));
     }
 
     public void solution3(GuaranteeComponents... guaranteeComponents) {
@@ -176,12 +176,9 @@ public class ProductService {
         productRepository.findAll()
                 .stream().map(Mapper::fromProductToProductWithGuarDTO)
 //                .peek(System.out::println)
-                .filter(f->!(f.getGuaranteeComponents().isEmpty()) && f.getGuaranteeComponents().containsAll(componentsList))
+                .filter(f -> !(f.getGuaranteeComponents().isEmpty()) && f.getGuaranteeComponents().containsAll(componentsList))
                 .forEach(System.out::println);
     }
-
-
-
 
 
 

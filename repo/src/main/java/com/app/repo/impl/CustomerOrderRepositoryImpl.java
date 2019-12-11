@@ -4,10 +4,111 @@ import com.app.model.CustomerOrder;
 import com.app.repo.generic.AbstractCrudRepository;
 import com.app.repo.generic.CustomerOrderRepository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
-public class CustomerOrderRepositoryImpl extends AbstractCrudRepository<CustomerOrder,Long> implements CustomerOrderRepository {
+
+public class CustomerOrderRepositoryImpl extends AbstractCrudRepository<CustomerOrder, Long> implements CustomerOrderRepository {
     public CustomerOrderRepositoryImpl(String persistenceUnit) {
         super(persistenceUnit);
+    }
+
+
+    public List<CustomerOrder> query6(LocalDate minDate, LocalDate maxDate) {
+        EntityManager em = null;
+        EntityTransaction tx = null;
+
+        List<CustomerOrder> elements = new ArrayList<>();
+
+        try {
+            em = emf.createEntityManager();
+            tx = em.getTransaction();
+            tx.begin();
+
+            elements = em
+                    .createQuery("select c from CustomerOrder c  where c.date < :maxDate and c.date > :minDate", CustomerOrder.class)
+                    .setParameter("minDate",minDate)
+                    .setParameter("maxDate",maxDate)
+                    .getResultList();
+            tx.commit();
+
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
+        return elements;
+    }
+
+    public List<CustomerOrder> query7(String surname, String name) {
+        EntityManager em = null;
+        EntityTransaction tx = null;
+
+        List<CustomerOrder> elements = new ArrayList<>();
+
+        try {
+            em = emf.createEntityManager();
+            tx = em.getTransaction();
+            tx.begin();
+
+            elements = em
+                    .createQuery("select c from CustomerOrder c join c.customer cc where cc.surname =:surname and cc.name =: name", CustomerOrder.class)
+                    .setParameter("surname",surname)
+                    .setParameter("name", name)
+                    .getResultList();
+
+            tx.commit();
+
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
+        return elements;
+    }
+
+    public List<CustomerOrder> query8a() {
+        EntityManager em = null;
+        EntityTransaction tx = null;
+
+        List<CustomerOrder> elements = new ArrayList<>();
+
+        try {
+            em = emf.createEntityManager();
+            tx = em.getTransaction();
+            tx.begin();
+
+            elements = em
+                    .createQuery("select c from CustomerOrder c join c.customer cc join c.product p where cc.country.name = p.producer.country.name",CustomerOrder.class)
+                    .getResultList();
+
+            tx.commit();
+
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
+        return elements;
     }
 }
 

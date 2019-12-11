@@ -1,9 +1,12 @@
 package com.app.main;
 
-import com.app.model.enums.GuaranteeComponents;
+import com.app.model.Trade;
 import com.app.repo.impl.*;
 import com.app.service.*;
 import com.app.service.valid.*;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 public class App {
 
@@ -63,7 +66,14 @@ public class App {
 //        productService.solution1();
 //        orderService.orderInitAuto();
 //        orderService.solution2("GERMAN",0,100);
-        productService.solution3(GuaranteeComponents.MONEY_BACK);
+//        productService.solution3(GuaranteeComponents.MONEY_BACK);
+//            stockService.solution4();
+//            stockService.solution5("FOOD",10);
+//          orderService.solution6(LocalDate.of(2019,12,7),LocalDate.now(),new BigDecimal(250));
+
+        orderService.solution7("KAROL","CICHON","GERMAN");
+//        orderService.solution8();
+        orderService.solution8a();
 
     }
 }

@@ -17,14 +17,14 @@ public class ProductRepositoryImpl extends AbstractCrudRepository<Product, Long>
     public Optional<Product> findByName(String name) {
         EntityManager em = null;
         EntityTransaction tx = null;
-        Optional<Product> productByName = Optional.empty();
+        Optional<Product> list = Optional.empty();
 
         try {
             em = emf.createEntityManager();
             tx = em.getTransaction();
             tx.begin();
 
-            productByName = em
+            list = em
                     .createQuery("select c from Product c where c.name = :name", Product.class)
                     .setParameter("name", name)
                     .getResultStream().findFirst();
@@ -41,7 +41,7 @@ public class ProductRepositoryImpl extends AbstractCrudRepository<Product, Long>
                 em.close();
             }
         }
-        return productByName;
+        return list;
     }
 
     public Optional<Integer> getQuantityOfProductInStock(String productName) {
