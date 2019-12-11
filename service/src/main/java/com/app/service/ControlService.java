@@ -2,7 +2,11 @@ package com.app.service;
 
 
 import com.app.exception.AppException;
+import com.app.model.enums.GuaranteeComponents;
 import com.app.service.dataUtility.DataManager;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 
 public class ControlService {
@@ -18,11 +22,9 @@ public class ControlService {
     StockService stockService;
     CustomerService customerService;
     OrderService orderService;
-    SolutionService solutionService;
 
 
-
-    public ControlService(CategoryService categoryService, TradeService tradeService, CountryService countryService, ShopService shopService, ProducerService producerService, ProductService productService, StockService stockService, CustomerService customerService, OrderService orderService, SolutionService solutionService) {
+    public ControlService(CategoryService categoryService, TradeService tradeService, CountryService countryService, ShopService shopService, ProducerService producerService, ProductService productService, StockService stockService, CustomerService customerService, OrderService orderService) {
         this.categoryService = categoryService;
         this.tradeService = tradeService;
         this.countryService = countryService;
@@ -32,9 +34,8 @@ public class ControlService {
         this.stockService = stockService;
         this.customerService = customerService;
         this.orderService = orderService;
-        this.solutionService = solutionService;
-    }
 
+    }
 
 
     private void initSolution() {
@@ -44,35 +45,37 @@ public class ControlService {
         int choice = DataManager.getInt("PRESS NUMBER OF RESULT YOU WANT TO GET");
         switch (choice) {
             case 1: {
-                solutionService.solution1();
+                productService.solution1();
+                ;
                 break;
             }
             case 2: {
-                solutionService.solution2();
+                orderService.solution2("GERMAN", 0, 100);
+                ;
                 break;
             }
             case 3: {
-                solutionService.solution3();
+                productService.solution3(GuaranteeComponents.MONEY_BACK);
                 break;
             }
             case 4: {
-                solutionService.solution4();
+                stockService.solution4();
                 break;
             }
             case 5: {
-                solutionService.solution5();
+                stockService.solution5("FOOD", 10);
                 break;
             }
             case 6: {
-                solutionService.solution6();
+                orderService.solution6(LocalDate.of(2019, 12, 7), LocalDate.now(), new BigDecimal(250));
                 break;
             }
             case 7: {
-                solutionService.solution7();
+                orderService.solution7("KAROL", "CICHON", "GERMAN");
                 break;
             }
             case 8: {
-                solutionService.solution8();
+                orderService.solution8a();
                 break;
             }
         }
@@ -107,21 +110,22 @@ public class ControlService {
         System.out.println(sb.toString());
     }
 
-    private void initDataAuto(){
+    private void initDataAuto() {
 
         categoryService.categoryDataInitAutoFill();
         tradeService.tradeDataInitAutoFill();
         countryService.countryDataInitAutoFill();
 
-        shopService. shopDataInitAutoFill();
+        shopService.shopDataInitAutoFill();
         producerService.producerInitAuto();
         productService.productInitAuto();
         stockService.stockDataInitAutoFill();
 
-        customerService. customerDataInitAutoFill();
+        customerService.customerDataInitAutoFill();
         orderService.orderInitAuto();
 
     }
+
     private void initDataInDB() {
 
         try {
@@ -173,7 +177,6 @@ public class ControlService {
             }
         }
     }
-
 
 
     private void printExit() {

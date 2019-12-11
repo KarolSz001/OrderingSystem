@@ -129,6 +129,8 @@ public class OrderService {
         return order.getQuantity() <= (getQuantityOfProductInStock(order.getProduct().getName()));
     }*/
 
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public void solution2(String customersCountryName, Integer minAge, Integer maxAge) {
 
         customerOrderRepository.findAll()
@@ -183,6 +185,8 @@ public class OrderService {
 
                 .forEach((k, v) -> System.out.println(k.getName() + "::" + k.getSurname() + "::::" + (howManyProducts(k) - v)));
     }
+
+
 
     private Integer howManyProducts(Customer customer) {
         return customerOrderRepository.findAll().stream()
