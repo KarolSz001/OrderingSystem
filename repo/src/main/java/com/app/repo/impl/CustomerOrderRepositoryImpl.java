@@ -1,8 +1,10 @@
 package com.app.repo.impl;
 
 import com.app.model.CustomerOrder;
+import com.app.model.Product;
 import com.app.repo.generic.AbstractCrudRepository;
 import com.app.repo.generic.CustomerOrderRepository;
+import com.app.repo.generic.ProducerRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -49,11 +51,11 @@ public class CustomerOrderRepositoryImpl extends AbstractCrudRepository<Customer
         return elements;
     }
 
-    public List<CustomerOrder> query7(String surname, String name) {
+    public List<Product> query7(String surname, String name, String countryName) {
         EntityManager em = null;
         EntityTransaction tx = null;
 
-        List<CustomerOrder> elements = new ArrayList<>();
+        List<Product> elements = new ArrayList<>();
 
         try {
             em = emf.createEntityManager();
@@ -61,9 +63,10 @@ public class CustomerOrderRepositoryImpl extends AbstractCrudRepository<Customer
             tx.begin();
 
             elements = em
-                    .createQuery("select c from CustomerOrder c join c.customer cc where cc.surname =:surname and cc.name =: name", CustomerOrder.class)
+                    .createQuery("select p from CustomerOrder c join c.customer cc join c.product p where cc.surname =:surname and cc.name =: name and cc.country.name =:countryName", Product.class)
                     .setParameter("surname",surname)
                     .setParameter("name", name)
+                    .setParameter("countryName", countryName)
                     .getResultList();
 
             tx.commit();

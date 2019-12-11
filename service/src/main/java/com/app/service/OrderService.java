@@ -146,36 +146,26 @@ public class OrderService {
 
     public void solution6(LocalDate min, LocalDate max, BigDecimal priceOrder) {
         customerOrderRepository.query6(min, max).stream()
-//                .peek(System.out::println)
                 .filter(f -> f.getProduct().getPrice().subtract(f.getProduct().getPrice().multiply(f.getDiscount())).compareTo(priceOrder) > 0)
                 .collect(Collectors.toCollection(ArrayList::new))
                 .forEach(System.out::println);
     }
 
-    public void solution7(String name, String sureName, String countryName) {
+    public void solution7() {
+        customerService.printAllCustomersFormDb();
+        String name = DataManager.getLine("GIVE A NAME OF CUSTOMER");
+        String sureName = DataManager.getLine("GIVE A SURNAME OF CUSTOMER");
+        String countryName = DataManager.getLine("GIVE A COUNTRY NAME OF CUSTOMER");
 
-        customerOrderRepository.query7(sureName, name)
+
+
+        customerOrderRepository.query7(sureName, name, countryName)
                 .stream()
                 .peek(System.out::println)
-                .filter(f -> f.getCustomer().getName().equals(name))
-                .filter(f -> f.getCustomer().getCountry().getName().equals(countryName))
-                .collect(Collectors.toList())
-                .forEach(System.out::println);
+                .collect(Collectors.groupingBy(Product::getProducer))
+                .forEach((k,v)-> System.out.println("PRODUCER--->>" + k.getName() + ":::" + v));
     }
 
-  /*  public void solution8() {
-        customerOrderRepository.findAll().stream()
-                .filter(f -> f.getQuantity() >= 1)
-                .filter(f -> f.getCustomer().getCountry().getName().equals(f.getProduct().getProducer().getCountry().getName()))
-//                .map(CustomerOrder::getCustomer)
-                .collect(Collectors.toMap(
-                        CustomerOrder::getCustomer,
-                        CustomerOrder::getQuantity,
-                        Integer::sum,
-                        HashMap::new
-                ))
-                .forEach((k, v) -> System.out.println(k.getName() + "::" + k.getSurname() + "::::" + (howManyProducts(k) - v)));
-    }*/
     public void solution8a() {
         customerOrderRepository.query8a().stream()
                 .collect(Collectors.toMap(
@@ -187,8 +177,6 @@ public class OrderService {
 
                 .forEach((k, v) -> System.out.println(k.getName() + "::" + k.getSurname() + "::::" + (howManyProducts(k) - v)));
     }
-
-
 
     private Integer howManyProducts(Customer customer) {
         return customerOrderRepository.findAll().stream()

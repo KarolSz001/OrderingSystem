@@ -67,7 +67,7 @@ public class ControlService {
                 break;
             }
             case 7: {
-                orderService.solution7("KAROL", "CICHON", "GERMAN");
+                orderService.solution7();
                 break;
             }
             case 8: {
