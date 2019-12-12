@@ -2,10 +2,7 @@ package com.app.service;
 
 
 import com.app.exception.AppException;
-import com.app.model.Producer;
-import com.app.model.Product;
-import com.app.model.Shop;
-import com.app.model.Stock;
+import com.app.model.*;
 import com.app.repo.generic.StockRepository;
 import com.app.service.dataUtility.DataManager;
 
@@ -21,11 +18,13 @@ public class StockService {
     private final ProductService productService;
     private final ShopService shopService;
     private final StockRepository stockRepository;
+    private final TradeService tradeService;
 
-    public StockService(ProductService productService, ShopService shopService, StockRepository stockRepository) {
+    public StockService(ProductService productService, ShopService shopService, StockRepository stockRepository, TradeService tradeService) {
         this.productService = productService;
         this.shopService = shopService;
         this.stockRepository = stockRepository;
+        this.tradeService = tradeService;
     }
 
     private Stock addRecordToStock(Stock stock) {
@@ -109,7 +108,7 @@ public class StockService {
         stockRepository.query4();
     }
 
-    public void solution4() {
+    public void findProductsFromDifferentCountries() {
         stockRepository.query4().stream()
 //                .peek(s-> System.out.println(Arrays.toString(s)))
                 .collect(Collectors.groupingBy(e -> e[0]))
@@ -128,24 +127,26 @@ public class StockService {
                 .forEach((k, v) -> System.out.println(k.getName() + "::" + k.getProducer().getCountry().getName() + "::::::" + v));
     }
 
-    public void solution5(String tradeName, int minQuantity) {
-        stockRepository.query5(tradeName)
+    public void findProducers() {
+        Integer minQuantity = DataManager.getInt("PRESS min quantity of producers");
+        Trade trade = tradeService.findRandomTradeInDB();
+        stockRepository.query5(trade.getName())
                 .stream()
                 .collect(Collectors.groupingBy(e -> e[0]))
                 .entrySet()
                 .stream()
                 .collect(Collectors.toMap(
                         e -> (Producer) e.getKey(),
-                        e -> e.getValue().stream().map(m -> (Integer) (m[1])).reduce(0,Integer::sum)
+                        e -> e.getValue().stream().map(m -> (Integer) (m[1])).reduce(0, Integer::sum)
                 ))
                 .entrySet()
                 .stream()
-                .filter(f->f.getValue() > minQuantity)
+                .filter(f -> f.getValue() > minQuantity)
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue
                 ))
-                .forEach((k,v)-> System.out.println(k + "::::" + v));
+                .forEach((k, v) -> System.out.println(k + "::::" + v));
 
     }
 

@@ -1,11 +1,7 @@
 package com.app.service;
 
 import com.app.exception.AppException;
-import com.app.model.enums.GuaranteeComponents;
 import com.app.service.dataUtility.DataManager;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
 
 public class ControlService {
 
@@ -43,35 +39,35 @@ public class ControlService {
         int choice = DataManager.getInt("PRESS NUMBER OF RESULT YOU WANT TO GET");
         switch (choice) {
             case 1: {
-                productService.solution1();
+                productService.findProductsWithBiggestPrice();
                 break;
             }
             case 2: {
-                orderService.solution2("GERMAN", 0, 100);
+                orderService.findProductsByParameters();
                 break;
             }
             case 3: {
-                productService.solution3(GuaranteeComponents.MONEY_BACK);
+                productService.findProductsByComponents();
                 break;
             }
             case 4: {
-                stockService.solution4();
+                stockService.findProductsFromDifferentCountries();
                 break;
             }
             case 5: {
-                stockService.solution5("FOOD", 0);
+                stockService.findProducers();
                 break;
             }
             case 6: {
-                orderService.solution6(LocalDate.of(2019, 12, 7), LocalDate.now(), new BigDecimal(250));
+                orderService.findOrders();
                 break;
             }
             case 7: {
-                orderService.solution7();
+                orderService.findProducts();
                 break;
             }
             case 8: {
-                orderService.solution8a();
+                orderService.findCustomers();
                 break;
             }
         }

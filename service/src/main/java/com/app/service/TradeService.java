@@ -3,10 +3,9 @@ package com.app.service;
 import com.app.exception.AppException;
 import com.app.model.Trade;
 import com.app.repo.generic.TradeRepository;
-import com.app.repo.impl.TradeRepositoryImpl;
 import com.app.service.dataUtility.DataManager;
 import com.app.service.valid.TradeValidator;
-import lombok.RequiredArgsConstructor;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -49,6 +48,11 @@ public class TradeService {
         }
     }
 
+    public String  findRandomTradeNames(){
+        List<String> tradesName = List.of("FOOD","TECH","BOOK","AUDIO");
+        return tradesName.get(new Random().nextInt(tradesName.size()));
+    }
+
     public Trade findRandomTradeInDB() {
         List<Trade> trades = tradeRepository.findAll();
         int index = new Random().nextInt(trades.size() - 1);
@@ -86,7 +90,7 @@ public class TradeService {
         printAllRecordsInTrades();
     }
 
-    private void singleTradeRecordCategory() {
+    private void singleTradeRecordCategory() throws AppException {
         String name = DataManager.getLine(" PRESS TRADE NAME ");
         Trade trade = Trade.builder().name(name).build();
         tradeValidator.validate(trade);
@@ -103,4 +107,6 @@ public class TradeService {
     public void clearDataFromTrade(){
         tradeRepository.deleteAll();
     }
+
+
 }

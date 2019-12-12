@@ -10,6 +10,7 @@ import com.app.service.dataUtility.DataManager;
 import com.app.service.valid.OrderValidator;
 
 
+import javax.xml.crypto.Data;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
@@ -128,45 +129,61 @@ public class OrderService {
         return order.getQuantity() <= (getQuantityOfProductInStock(order.getProduct().getName()));
     }*/
 
-    public void clearDataFromOrder(){
+    public void clearDataFromOrder() {
         customerOrderRepository.deleteAll();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public void solution2(String customersCountryName, Integer minAge, Integer maxAge) {
+    public void findProductsByParameters() {
+
+        String name = DataManager.getLine("GIVE CUSTOMER NAME");
+        Integer minAge = DataManager.getInt("GIVE MIN AGE");
+        Integer maxAge = DataManager.getInt("GIVE MIN AGE");
 
         customerOrderRepository.findAll()
                 .stream()
-                .filter(f -> f.getCustomer().getCountry().getName().equals(customersCountryName) && f.getCustomer().getAge() > minAge && f.getCustomer().getAge() < maxAge)
+                .filter(f -> f.getCustomer().getCountry().getName().equals(name) && f.getCustomer().getAge() > minAge && f.getCustomer().getAge() < maxAge)
                 .map(CustomerOrder::getProduct)
                 .map(Mapper::fromProductToProductDTO)
                 .sorted(Comparator.comparing(ProductDTO::getPrice, Comparator.naturalOrder()))
                 .forEach(System.out::println);
     }
 
-    public void solution6(LocalDate min, LocalDate max, BigDecimal priceOrder) {
+    public void findOrders() {
+
+        System.out.println("PRESS NUMBER MIN");
+        LocalDate min = getDate();
+        System.out.println("PRESS NUMBER MAX");
+        LocalDate max = getDate();
+        BigDecimal price = BigDecimal.valueOf(DataManager.getInt("PRESS PRICE"));
+
         customerOrderRepository.query6(min, max).stream()
-                .filter(f -> f.getProduct().getPrice().subtract(f.getProduct().getPrice().multiply(f.getDiscount())).compareTo(priceOrder) > 0)
+                .filter(f -> f.getProduct().getPrice().subtract(f.getProduct().getPrice().multiply(f.getDiscount())).compareTo(price) > 0)
                 .collect(Collectors.toCollection(ArrayList::new))
                 .forEach(System.out::println);
     }
 
-    public void solution7() {
-        customerService.printAllCustomersFormDb();
-        String name = DataManager.getLine("GIVE A NAME OF CUSTOMER");
-        String sureName = DataManager.getLine("GIVE A SURNAME OF CUSTOMER");
-        String countryName = DataManager.getLine("GIVE A COUNTRY NAME OF CUSTOMER");
+    private LocalDate getDate() {
+        Integer yy = DataManager.getInt("PRESS YEAR");
+        Integer mm = DataManager.getInt("PRESS MONTH");
+        Integer dd = DataManager.getInt("PRESS DAY");
+        return LocalDate.of(yy, mm, dd);
+    }
 
-
-
-        customerOrderRepository.query7(sureName, name, countryName)
+    public void findProducts() {
+        Customer customer = customerService.findRandomCustomerFromDb();
+        var surName = customer.getSurname();
+        var name = customer.getName();
+        var countryName = customer.getName();
+        System.out.println("WE LOOKING FOR CUSTOMER " + surName + ":::" + name + ":::" + countryName);
+        customerOrderRepository.query7(surName, name, countryName)
                 .stream()
                 .peek(System.out::println)
                 .collect(Collectors.groupingBy(Product::getProducer))
-                .forEach((k,v)-> System.out.println("PRODUCER--->>" + k.getName() + ":::" + v));
+                .forEach((k, v) -> System.out.println("PRODUCER--->>" + k.getName() + ":::" + v));
     }
 
-    public void solution8a() {
+    public void findCustomers() {
         customerOrderRepository.query8a().stream()
                 .collect(Collectors.toMap(
                         CustomerOrder::getCustomer,

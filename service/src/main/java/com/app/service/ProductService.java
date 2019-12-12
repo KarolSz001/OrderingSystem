@@ -160,7 +160,7 @@ public class ProductService {
 
     ///////////////////////////////////////////////////////////////////
 
-    public void solution1() {
+    public void findProductsWithBiggestPrice() {
         productRepository.findAll()
                 .stream().map(Mapper::fromProductToProductDTO)
                 .collect(Collectors.groupingBy(ProductDTO::getCategoryName, Collectors.collectingAndThen(Collectors.maxBy(Comparator.comparing(ProductDTO::getPrice)), Optional::orElseThrow)))
@@ -168,12 +168,13 @@ public class ProductService {
     }
 
 
-    public void solution3(GuaranteeComponents... guaranteeComponents) {
-        Set componentsList = new HashSet(Arrays.asList(guaranteeComponents));
+    public void findProductsByComponents() {
+
+        Set<GuaranteeComponents> components = GuaranteeComponents.getRandomComponent();
+        System.out.println("WE ARE LOOKING FOR PRODUCTS WITH COMPONENTS" + components);
         productRepository.findAll()
                 .stream().map(Mapper::fromProductToProductWithGuarDTO)
-//                .peek(System.out::println)
-                .filter(f -> !(f.getGuaranteeComponents().isEmpty()) && f.getGuaranteeComponents().containsAll(componentsList))
+                .filter(f -> !(f.getGuaranteeComponents().isEmpty()) && f.getGuaranteeComponents().containsAll(components))
                 .forEach(System.out::println);
     }
 
