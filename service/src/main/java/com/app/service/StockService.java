@@ -6,8 +6,6 @@ import com.app.model.*;
 import com.app.repo.generic.StockRepository;
 import com.app.service.dataUtility.DataManager;
 
-import java.lang.reflect.Array;
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -37,18 +35,29 @@ public class StockService {
 
     public Stock singleStockRecordCreator() {
 
-        System.out.println("List of product in our DataBase");
+        System.out.println("List of products in our DataBase");
         productService.showAllProductsInDB();
-        Long idProduct = DataManager.getLong("PRESS ID PRODUCT OF YOU CHOICE");
+        Long idProduct = DataManager.getLong("\nPRESS ID PRODUCT");
         Product product = productService.findProductById(idProduct);
 
         System.out.println("List of shops in our DataBase");
         shopService.printAllShopRecordsInDB();
-        Long idShop = DataManager.getLong("PRESS ID SHOP OF YOU CHOICE");
+        Long idShop = DataManager.getLong("PRESS ID SHOP");
         Shop shop = shopService.findShopById(idShop);
-        Integer quantityProductInStock = DataManager.getInt("PRESS NUMBER OF PRODUCT IN STOCK");
-        Stock stock = Stock.builder().product(product).quantity(quantityProductInStock).shop(shop).build();
+        Integer quantityProduct = DataManager.getInt("PRESS NUMBER OF PRODUCT IN STOCK");
+
+        if (!isProductInStock(product.getName())) {
+            Integer quantity = stockRepository.getQuantityProductInStock(product.getName()).orElseThrow(() -> new AppException("NO RECORDS IN DB"));
+            quantityProduct = quantityProduct + quantity;
+        }
+
+        Stock stock = Stock.builder().product(product).quantity(quantityProduct).shop(shop).build();
+
         return addRecordToStock(stock);
+    }
+
+    private boolean isProductInStock(String productName) {
+        return stockRepository.findOneByProductName(productName).isPresent();
     }
 
     public Stock findStockInDbById(Long idStock) {
@@ -61,12 +70,11 @@ public class StockService {
 
 
     public void stockInit() {
-
         String answer = DataManager.getLine("WELCOME TO STOCK DATA PANEL GENERATOR PRESS Y IF YOU WANNA PRESS DATA MANUALLY OR N IF YOU WANNA FILL THEM IN AUTOMATE");
         if (answer.toUpperCase().equals("Y")) {
-            stockDataInitAutoFill();
-        } else {
             stockDataShopInitManualFill();
+        } else {
+            stockDataInitAutoFill();
         }
     }
 
@@ -85,6 +93,11 @@ public class StockService {
             Product product = productService.findRandomProductFromDb();
             Shop shop = shopService.findRandomShopFromDb();
             Stock stock = Stock.builder().product(product).quantity(1).shop(shop).build();
+            Integer quantityProduct = stock.getQuantity();
+            if (!isProductInStock(product.getName())) {
+                Integer quantity = stockRepository.getQuantityProductInStock(product.getName()).orElseThrow(() -> new AppException("NO RECORDS IN DB"));
+                stock.setQuantity(quantityProduct + quantity);
+            }
             addStockDb(stock);
         }
     }
@@ -100,12 +113,13 @@ public class StockService {
         printAllStockRecordsInDB();
     }
 
+
     public void clearDataFromStock() {
         stockRepository.deleteAll();
     }
 
-    public void solution1a() {
-        stockRepository.query4();
+    public Stock getQuantityOfProductInStock(String productName) {
+        return stockRepository.findOneByProductName(productName).orElseThrow(() -> new AppException("NO FOUND RECORD"));
     }
 
     public void findProductsFromDifferentCountries() {
@@ -128,9 +142,10 @@ public class StockService {
     }
 
     public void findProducers() {
+
         Integer minQuantity = DataManager.getInt("PRESS min quantity of producers");
-        Trade trade = tradeService.findRandomTradeInDB();
-        stockRepository.query5(trade.getName())
+        String tradeName = tradeService.findRandomTradeNames();
+        stockRepository.query5(tradeName)
                 .stream()
                 .collect(Collectors.groupingBy(e -> e[0]))
                 .entrySet()
@@ -147,8 +162,15 @@ public class StockService {
                         Map.Entry::getValue
                 ))
                 .forEach((k, v) -> System.out.println(k + "::::" + v));
-
     }
 
-
+    public void findAllProductsInStock() {
+        stockRepository.findAllProducts()
+//                .stream()
+//                .collect(Collectors.toMap(
+//                        e -> (Product) e[0],
+//                        e -> (Integer) e[1]
+//                )).forEach((k, v) -> System.out.println(k + ":::::" + v));
+                .forEach(s -> System.out.println(Arrays.toString(s)));
+    }
 }

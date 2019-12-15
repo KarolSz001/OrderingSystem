@@ -16,11 +16,10 @@ public class CountryService {
 
 
     CountryRepository countryRepository;
-    CountryValidator countryValidator;
 
-    public CountryService(CountryRepository countryRepository, CountryValidator countryValidator) {
+
+    public CountryService(CountryRepository countryRepository) {
         this.countryRepository = countryRepository;
-        this.countryValidator = countryValidator;
     }
 
     private Country addCountryToDB(Country country) {
@@ -64,12 +63,11 @@ public class CountryService {
 
 
     public void countryInit() {
-
         String answer = DataManager.getLine("WELCOME TO COUNTRY DATA PANEL GENERATOR PRESS Y IF YOU WANNA PRESS DATA MANUALLY OR N IF YOU WANNA FILL THEM IN AUTOMATE");
         if (answer.toUpperCase().equals("Y")) {
-            countryDataInitAutoFill();
-        } else {
             countryDataInitManualFill();
+        } else {
+            countryDataInitAutoFill();
         }
     }
 
@@ -88,7 +86,8 @@ public class CountryService {
         printAllRecordsInCountries();
     }
 
-    private void singleCountryRecordCreator()  {
+    private void singleCountryRecordCreator() {
+        CountryValidator countryValidator = new CountryValidator();
         String name = DataManager.getLine("PRESS COUNTRY NAME");
         Country country = Country.builder().name(name).build();
         countryValidator.validate(country);
@@ -117,7 +116,7 @@ public class CountryService {
             return countries.get(new Random().nextInt(countries.size()));
     }
 
-    public void clearDataFromCountry(){
+    public void clearDataFromCountry() {
         countryRepository.deleteAll();
     }
 

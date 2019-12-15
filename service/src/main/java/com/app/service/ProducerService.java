@@ -11,19 +11,18 @@ import com.app.service.valid.ProducerValidator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 
 public class ProducerService {
 
     private final ProducerRepository producerRepository;
     private final TradeService tradeService;
-    private final ProducerValidator producerValidator;
     private final CountryService countryService;
 
-    public ProducerService(ProducerRepository producerRepository, TradeService tradeService, ProducerValidator producerValidator, CountryService countryService) {
+    public ProducerService(ProducerRepository producerRepository, TradeService tradeService, CountryService countryService) {
         this.producerRepository = producerRepository;
         this.tradeService = tradeService;
-        this.producerValidator = producerValidator;
         this.countryService = countryService;
     }
 
@@ -35,7 +34,7 @@ public class ProducerService {
     }
 
     private boolean isProducerAlreadyInDB(String producerName) {
-       return !producerRepository.findByName(producerName).isEmpty();
+        return !producerRepository.findByName(producerName).isEmpty();
     }
 
 
@@ -46,17 +45,17 @@ public class ProducerService {
             Country country = countryService.findRandomCountry();
             Trade trade = tradeService.findRandomTradeInDB();
             Producer producer = Producer.builder().name(name).country(country).trade(trade).build();
-            if(!isProducerAlreadyInDB(name))
-            addProducerToDB(producer);
+            if (!isProducerAlreadyInDB(name))
+                addProducerToDB(producer);
         }
     }
 
     public void producerInit() {
-        String answer = DataManager.getLine("WELCOME TO PRODUCER DATA PANEL GENERATOR PRESS Y IF YOU WANNA PRESS DATA AUTOMATE OR N IF YOU WANNA FILL THEM IN MANUAL");
+        String answer = DataManager.getLine("WELCOME TO PRODUCER DATA PANEL GENERATOR PRESS Y IF YOU WANNA PRESS DATA MANUALLY OR N IF YOU WANNA FILL THEM IN AUTOMATE");
         if (answer.toUpperCase().equals("Y")) {
-            producerInitAuto();
-        } else {
             producerInitManual();
+        } else {
+            producerInitAuto();
         }
     }
 
@@ -80,9 +79,16 @@ public class ProducerService {
     }
 
     private Producer singleProducerRecordCreator() {
+        ProducerValidator producerValidator = new ProducerValidator();
         String producerName = DataManager.getLine("PRESS PRODUCER NAME");
         Country country = countryService.findRandomCountryFromDB();
-        Trade trade = tradeService.findTradeByName(DataManager.getLine("PRESS TRADE NAME"));
+        Trade trade;
+        try {
+            trade = tradeService.findTradeByName(DataManager.getLine("PRESS TRADE NAME"));
+        } catch (AppException e) {
+            System.out.println(" NO RECORDS OF TRADE NAME , RETURN RANDOM VALUE");
+            trade = tradeService.findRandomTradeInDB();
+        }
         Producer producer = Producer.builder().name(producerName).country(country).trade(trade).build();
 
         producerValidator.validate(producer);
@@ -92,9 +98,9 @@ public class ProducerService {
 
         Optional<Producer> producerByName = producerRepository.findByName(producerName);
         if (producerByName.isEmpty()) {
-            throw new AppException("NO RECORDS TRADE IN DB");
+            addProducerToDB(producer);
         }
-        return addProducerToDB(producer);
+        return producer;
     }
 
     public void printAllRecordsInProducers() {
@@ -106,10 +112,9 @@ public class ProducerService {
         return producers.get(new Random().nextInt(producers.size()));
     }
 
-    public void clearDataFromProducer(){
+    public void clearDataFromProducer() {
         producerRepository.deleteAll();
     }
-
 
 
 }

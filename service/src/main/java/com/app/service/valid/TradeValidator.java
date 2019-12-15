@@ -2,7 +2,6 @@ package com.app.service.valid;
 
 import com.app.model.Trade;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class TradeValidator extends AbstractValidator<Trade>{
@@ -12,15 +11,15 @@ public class TradeValidator extends AbstractValidator<Trade>{
 
     @Override
     public Map<String, String> validate(Trade trade) {
-        Map<String, String> err = new HashMap<>();
+       errors.clear();
 
         if (!isNameCorrect(trade.getName())) {
-            err.put("Error nr 1", "Name only work with UpCase Letters and SPACE");
+            errors.put("Error nr 1", "Name only work with UpCase Letters and SPACE");
         }
         if (!isNameLengthCorrect(trade.getName())) {
-            err.put("Error nr 3", "Name is too short");
+            errors.put("Error nr 3", "Name is too short");
         }
-        return err;
+        return errors;
     }
 
     private boolean isNameCorrect(String name) {

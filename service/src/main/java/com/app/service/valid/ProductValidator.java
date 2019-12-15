@@ -4,7 +4,6 @@ package com.app.service.valid;
 import com.app.model.Product;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.Map;
 
 public class ProductValidator extends AbstractValidator<Product>{
@@ -14,19 +13,18 @@ public class ProductValidator extends AbstractValidator<Product>{
 
     @Override
     public Map<String, String> validate(Product product) {
-
-        Map<String, String> err = new HashMap<>();
+        errors.clear();
 
         if (!isNameCorrect(product.getName())) {
-            err.put("Error nr 1", "Name only work with Letters");
+            errors.put("Error nr 1", "Name only work with Letters");
         }
         if (!isNameLengthCorrect(product.getName())) {
-            err.put("Error nr 2", "Name is too short");
+            errors.put("Error nr 2", "Name is too short");
         }
         if (!isPriceCorrect(product.getPrice())) {
-            err.put("Error nr 3", "Price has negative value");
+            errors.put("Error nr 3", "Price has negative value");
         }
-        return err;
+        return errors;
     }
 
     private boolean isNameCorrect(String name) {

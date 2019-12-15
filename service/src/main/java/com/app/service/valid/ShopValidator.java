@@ -4,7 +4,6 @@ package com.app.service.valid;
 
 import com.app.model.Shop;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class ShopValidator extends AbstractValidator<Shop> {
@@ -14,15 +13,15 @@ public class ShopValidator extends AbstractValidator<Shop> {
 
     @Override
     public Map<String, String> validate(Shop shop) {
-        Map<String, String> err = new HashMap<>();
+    errors.clear();
 
         if (!isNameCorrect(shop.getName())) {
-            err.put("Error nr 1", "Name only work with Letters");
+            errors.put("Error nr 1", "Name only work with Letters");
         }
         if (!isNameLengthCorrect(shop.getName())) {
-            err.put("Error nr 3", "Name is too short");
+            errors.put("Error nr 3", "Name is too short");
         }
-        return err;
+        return errors;
     }
 
 

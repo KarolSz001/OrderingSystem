@@ -15,11 +15,9 @@ public class CategoryService {
 
 
     private final CategoryRepository categoryRepository;
-    private final CategoryValidator categoryValidator;
 
-    public CategoryService(CategoryRepository categoryRepository, CategoryValidator categoryValidator) {
+    public CategoryService(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
-        this.categoryValidator = categoryValidator;
     }
 
     private Category addCategoryToDB(Category category) {
@@ -58,12 +56,12 @@ public class CategoryService {
         categoryRepository.findAll().forEach((s) -> System.out.println(s + "\n"));
     }
 
-    public void categoryInit() throws AppException {
-        String answer = DataManager.getLine("WELCOME TO CATEGORY DATA PANEL GENERATOR PRESS Y IF YOU WANNA PRESS DATA MANUALLY OR N IF YOU WANNA FILL THEM IN AUTOMATE");
+    public void categoryInit() {
+        String answer = DataManager.getLine("\nWELCOME TO CATEGORY DATA PANEL GENERATOR PRESS Y IF YOU WANNA PRESS DATA MANUALLY OR N IF YOU WANNA FILL THEM IN AUTOMATE");
         if (answer.toUpperCase().equals("Y")) {
-            categoryDataInitAutoFill();
-        } else {
             categoryDataInitManualFill();
+        } else {
+            categoryDataInitAutoFill();
         }
     }
 
@@ -72,9 +70,8 @@ public class CategoryService {
         printAllRecordsInCategories();
     }
 
-    private void categoryDataInitManualFill() throws AppException {
-
-        System.out.println("LOADING MANUAL PROGRAM TO UPDATE DATA_BASE");
+    private void categoryDataInitManualFill() {
+        System.out.println("\nLOADING MANUAL PROGRAM TO UPDATE DATA_BASE");
         int numberOfRecords = DataManager.getInt("PRESS NUMBER OF RECORD YOU WANNA ADD TO DB");
 
         for (int i = 1; i <= numberOfRecords; i++) {
@@ -85,12 +82,10 @@ public class CategoryService {
     }
 
     private void singleCategoryRecordCreator() throws AppException {
-
+        CategoryValidator categoryValidator = new CategoryValidator();
         String name = DataManager.getLine("PRESS CATEGORY NAME");
         Category category = Category.builder().name(name).build();
         categoryValidator.validate(category);
-
-        System.out.println(categoryValidator.hasErrors());
         if (categoryValidator.hasErrors()) {
             throw new AppException("VALID DATA IN COUNTRY CREATOR");
 
@@ -103,7 +98,7 @@ public class CategoryService {
         return categoryRepository.findByName(name);
     }
 
-    public void clearDataFromCategory(){
+    public void clearDataFromCategory() {
         categoryRepository.deleteAll();
     }
 }

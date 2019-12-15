@@ -4,7 +4,6 @@ package com.app.service.valid;
 
 import com.app.model.Producer;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class ProducerValidator extends AbstractValidator<Producer> {
@@ -15,16 +14,15 @@ public class ProducerValidator extends AbstractValidator<Producer> {
 
     @Override
     public Map<String, String> validate(Producer producer) {
-
-        Map<String, String> err = new HashMap<>();
+        errors.clear();
 
         if (!isNameCorrect(producer.getName())) {
-            err.put("Error nr 1", "Name only work with Letters");
+            errors.put("Error nr 1", "Name only work with Letters");
         }
         if (!isNameLengthCorrect(producer.getName())) {
-            err.put("Error nr 3", "Name is too short");
+            errors.put("Error nr 3", "Name is too short");
         }
-        return err;
+        return errors;
     }
 
 

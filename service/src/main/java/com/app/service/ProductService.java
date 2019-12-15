@@ -12,18 +12,15 @@ import com.app.service.valid.ProductValidator;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 public class ProductService {
 
-    private final ProductValidator productValidator;
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
     private final ProducerService producerService;
 
-    public ProductService(ProductValidator productValidator, ProductRepository productRepository, CategoryService categoryService, ProducerService producerService) {
-        this.productValidator = productValidator;
+    public ProductService( ProductRepository productRepository, CategoryService categoryService, ProducerService producerService) {
         this.productRepository = productRepository;
         this.categoryService = categoryService;
         this.producerService = producerService;
@@ -48,16 +45,15 @@ public class ProductService {
 
     public void productInit() {
 
-        System.out.println("check !!!!");
-        String answer = DataManager.getLine("WELCOME TO PRODUCT DATA PANEL GENERATOR PRESS Y IF YOU WANNA PRESS DATA AUTOMATE OR N IF YOU WANNA FILL THEM IN MANUAL");
+        String answer = DataManager.getLine("WELCOME TO PRODUCT DATA PANEL GENERATOR PRESS Y IF YOU WANNA PRESS DATA MANUALLY OR N IF YOU WANNA FILL THEM IN AUTOMATE");
         if (answer.toUpperCase().equals("Y")) {
-            productInitAuto();
+           productInitManual();
         } else {
-            productInitManual();
+            productInitAuto();
         }
     }
 
-    void productInitAuto() {
+    public void productInitAuto() {
         generateProductAutoMode();
         printProductRecordsFromDB();
     }
@@ -84,11 +80,16 @@ public class ProductService {
             if (isGuarantee()) {
                 components = GuaranteeComponents.getRandomComponent();
             }
+
             Category category = categoryService.findRandomCategoryFromDB();
             String productName = generateProductName();
             BigDecimal price = generateProductPrice();
             Product product = Product.builder().name(productName).price(price).producer(producer).components(components).category(category).build();
-            addProductToDB(product);
+
+            if (!isProductAlreadyInDB(product)) {
+                addProductToDB(product);
+            }
+
         }
     }
 
@@ -113,6 +114,7 @@ public class ProductService {
 
     public Product singleProducerRecordCreator() {
 
+        ProductValidator productValidator = new ProductValidator();
         String productName = DataManager.getLine("PRESS PRODUCT NAME");
         BigDecimal price = BigDecimal.valueOf(DataManager.getInt("PRESS PRICE"));
         Category category = categoryService.findRandomCategoryFromDB();
@@ -127,17 +129,12 @@ public class ProductService {
         if (productValidator.hasErrors()) {
             throw new AppException("ERROR IN PRODUCT VALIDATION");
         }
-
         return addProductToDB(product);
     }
 
 
-    public Integer getQuantityOfProductInStock(String productName) {
-        return productRepository.getQuantityOfProductInStock(productName).orElseThrow(() -> new AppException("NO RECORD IN DB"));
-    }
-
     public void showAllProductsInDB() {
-        productRepository.findAll().forEach(System.out::print);
+        productRepository.findAll().forEach((s)-> System.out.println("\n" + s));
     }
 
     public Product findProductByName(String productName) {
@@ -149,13 +146,12 @@ public class ProductService {
         return productRepository.findOne(id).orElseThrow(() -> new AppException("NO RECORD IN DB"));
     }
 
-    public Long getIdProductInStock(String name) {
-        return productRepository.getIdProductInStock(name).orElseThrow(() -> new AppException("NO FOUND RECORD IN DB"));
-    }
 
-    public void clearDataFromProduct(){
+    public void clearDataFromProduct() {
         productRepository.deleteAll();
     }
+
+
 
 
     ///////////////////////////////////////////////////////////////////
@@ -169,7 +165,6 @@ public class ProductService {
 
 
     public void findProductsByComponents() {
-
         Set<GuaranteeComponents> components = GuaranteeComponents.getRandomComponent();
         System.out.println("WE ARE LOOKING FOR PRODUCTS WITH COMPONENTS" + components);
         productRepository.findAll()

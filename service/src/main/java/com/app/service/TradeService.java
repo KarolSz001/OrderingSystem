@@ -15,11 +15,9 @@ import java.util.Random;
 public class TradeService {
 
     TradeRepository tradeRepository;
-    TradeValidator tradeValidator;
 
-    public TradeService(TradeRepository tradeRepository, TradeValidator tradeValidator) {
+    public TradeService(TradeRepository tradeRepository) {
         this.tradeRepository = tradeRepository;
-        this.tradeValidator = tradeValidator;
     }
 
     private Trade addCategoryToDB(Trade trade) {
@@ -48,8 +46,8 @@ public class TradeService {
         }
     }
 
-    public String  findRandomTradeNames(){
-        List<String> tradesName = List.of("FOOD","TECH","BOOK","AUDIO");
+    public String findRandomTradeNames() {
+        List<String> tradesName = List.of("FOOD", "TECH", "BOOK", "AUDIO");
         return tradesName.get(new Random().nextInt(tradesName.size()));
     }
 
@@ -61,16 +59,16 @@ public class TradeService {
 
     public void printAllRecordsInTrades() {
         System.out.println("\n LOADING DATA COMPLETED ----> BELOW ALL RECORDS ");
-        tradeRepository.findAll().forEach((s)-> System.out.println(s + "\n"));
+        tradeRepository.findAll().forEach((s) -> System.out.println(s + "\n"));
     }
 
     public void tradeInit() {
 
         String answer = DataManager.getLine("\n WELCOME TO TRADE DATA PANEL GENERATOR PRESS Y IF YOU WANNA PRESS DATA MANUALLY OR N IF YOU WANNA FILL THEM IN AUTOMATE ");
         if (answer.toUpperCase().equals("Y")) {
-            tradeDataInitAutoFill();
-        } else {
             tradeDataInitManualFill();
+        } else {
+            tradeDataInitAutoFill();
         }
     }
 
@@ -91,20 +89,21 @@ public class TradeService {
     }
 
     private void singleTradeRecordCategory() throws AppException {
+        TradeValidator tradeValidator = new TradeValidator();
         String name = DataManager.getLine(" PRESS TRADE NAME ");
         Trade trade = Trade.builder().name(name).build();
         tradeValidator.validate(trade);
         if (tradeValidator.hasErrors()) {
             throw new AppException(" VALID DATA IN TRADE CREATOR ");
         }
-       addCategoryToDB(trade);
+        addCategoryToDB(trade);
     }
 
-    public Trade findTradeByName(String name){
-        return tradeRepository.findByName(name).orElseThrow(()->new AppException("\n NO RECORDS FOUND IN DB "));
+    public Trade findTradeByName(String name) {
+        return tradeRepository.findByName(name).orElseThrow(() -> new AppException("\n NO RECORDS FOUND IN DB "));
     }
 
-    public void clearDataFromTrade(){
+    public void clearDataFromTrade() {
         tradeRepository.deleteAll();
     }
 

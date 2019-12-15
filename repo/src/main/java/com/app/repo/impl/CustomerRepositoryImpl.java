@@ -27,8 +27,8 @@ public class CustomerRepositoryImpl extends AbstractCrudRepository<Customer, Lon
                 tx.begin();
 
                 customerBySurName = em
-                        .createQuery("select c from Customer c where c.surName = :surName", Customer.class)
-                        .setParameter("surName", surName)
+                        .createQuery("select c from Customer c where c.surname = :surname", Customer.class)
+                        .setParameter("surname", surName)
                         .getResultStream().findFirst();
 
                 tx.commit();

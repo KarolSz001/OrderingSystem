@@ -16,27 +16,26 @@ public class CustomerValidator extends AbstractValidator<Customer> {
     @Override
 
     public Map<String, String> validate(Customer customer) {
-
-        Map<String, String> err = new HashMap<>();
+        errors.clear();
 
         if (!isNameCorrect(customer.getName())) {
-            err.put("Error nr 1", "Name only work with Letters");
+            errors.put("Error nr 1", "Name only work with Letters");
         }
         if (!isSurnameCorrect(customer.getSurname())) {
-            err.put("Error nr 2", "Surname only work with Letters");
+            errors.put("Error nr 2", "Surname only work with Letters");
         }
         if (!isNameLengthCorrect(customer.getName())) {
-            err.put("Error nr 3", "Name is too short");
+            errors.put("Error nr 3", "Name is too short");
         }
 
         if (!isSurnameLengthCorrect(customer.getSurname())) {
-            err.put("Error nr 4", "Surname is too short");
+            errors.put("Error nr 4", "Surname is too short");
         }
         if (!isAgeCorrect(customer.getAge())) {
-            err.put("Error nr 5", "Age is wrong");
+            errors.put("Error nr 5", "Age is wrong");
         }
 
-        return err;
+        return errors;
     }
 
     private boolean isNameCorrect(String name) {

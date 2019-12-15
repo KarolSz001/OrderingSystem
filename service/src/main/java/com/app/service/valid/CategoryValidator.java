@@ -1,8 +1,6 @@
 package com.app.service.valid;
 
 import com.app.model.Category;
-
-import java.util.HashMap;
 import java.util.Map;
 
 public class CategoryValidator extends AbstractValidator<Category>{
@@ -13,16 +11,15 @@ public class CategoryValidator extends AbstractValidator<Category>{
 
     @Override
     public Map<String, String> validate(Category category) {
-        Map<String, String> err = new HashMap<>();
+        errors.clear();
 
         if (!isNameCorrect(category.getName())) {
-            err.put("Error nr 1", "Name only work with UpCase Letters");
+            errors.put("Error nr 1", "Name only work with UpCase Letters");
         }
         if (!isNameLengthCorrect(category.getName())) {
-            err.put("Error nr 3", "Name is too short");
+            errors.put("Error nr 3", "Name is too short");
         }
-
-        return err;
+        return errors;
     }
 
     private boolean isNameCorrect(String name) {

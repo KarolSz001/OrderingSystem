@@ -17,12 +17,11 @@ public class CustomerService {
 
     private final CountryService countryService;
     private final CustomerRepository customerRepository;
-    private final CustomerValidator customerValidator;
 
-    public CustomerService(CountryService countryService, CustomerRepository customerRepository, CustomerValidator customerValidator) {
+    public CustomerService(CountryService countryService, CustomerRepository customerRepository) {
         this.countryService = countryService;
         this.customerRepository = customerRepository;
-        this.customerValidator = customerValidator;
+
     }
 
     public Customer addCustomerToDB(Customer customer) {
@@ -36,6 +35,7 @@ public class CustomerService {
 
     public Customer singleCountryRecordCreator() {
 
+        CustomerValidator customerValidator = new CustomerValidator();
         String name = DataManager.getLine("PRESS NAME");
         String sureName = DataManager.getLine("PRESS SURNAME");
         Integer age = DataManager.getInt("PRESS AGE");
@@ -56,7 +56,7 @@ public class CustomerService {
     }
 
     public void showAllCustomersInDB() {
-        customerRepository.findAll().forEach(System.out::print);
+        customerRepository.findAll().forEach((s)-> System.out.println("\n" + s));
     }
 
     public Customer findCustomerById(Long id) {
@@ -71,12 +71,11 @@ public class CustomerService {
     }
 
     public void customerInit() {
-
         String answer = DataManager.getLine("WELCOME TO CUSTOMER DATA PANEL GENERATOR PRESS Y IF YOU WANNA PRESS DATA MANUALLY OR N IF YOU WANNA FILL THEM IN AUTOMATE");
         if (answer.toUpperCase().equals("Y")) {
-            customerDataInitAutoFill();
-        } else {
             customerDataInitManualFill();
+        } else {
+            customerDataInitAutoFill();
         }
     }
 
@@ -127,7 +126,7 @@ public class CustomerService {
         customerRepository.findAll().forEach((s -> System.out.println(s + "\n")));
     }
 
-    public void clearDataFromCustomer(){
+    public void clearDataFromCustomer() {
         customerRepository.deleteAll();
     }
 

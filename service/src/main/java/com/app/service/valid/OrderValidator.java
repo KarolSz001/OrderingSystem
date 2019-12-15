@@ -13,17 +13,16 @@ public class OrderValidator extends AbstractValidator<CustomerOrder> {
 
     @Override
     public Map<String, String> validate(CustomerOrder customerOrder) {
-
-        Map<String, String> err = new HashMap<>();
+        errors.clear();
 
         if (!isDateCorrect(customerOrder.getDate())) {
-            err.put("Error nr 1", "Order Data is valid");
+            errors.put("Error nr 1", "Order Data is valid");
         }
         if (!isDiscountNumberCorrect(customerOrder.getDiscount())) {
-            err.put("Error nr 2", "Name is too short");
+            errors.put("Error nr 2", "Name is too short");
         }
 
-        return err;
+        return errors;
     }
 
     private boolean isDateCorrect(LocalDate localDate) {

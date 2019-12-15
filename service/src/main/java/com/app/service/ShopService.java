@@ -16,13 +16,11 @@ public class ShopService {
 
     private final ShopRepository shopRepository;
     private final CountryService countryService;
-    private final ShopValidator shopValidator;
 
 
-    public ShopService(ShopRepository shopRepository, CountryService countryService, ShopValidator shopValidator) {
+    public ShopService(ShopRepository shopRepository, CountryService countryService) {
         this.shopRepository = shopRepository;
         this.countryService = countryService;
-        this.shopValidator = shopValidator;
     }
 
     public Shop addShopToDB(Shop shop) {
@@ -50,9 +48,9 @@ public class ShopService {
 
         String answer = DataManager.getLine("WELCOME TO SHOP DATA PANEL GENERATOR PRESS Y IF YOU WANNA PRESS DATA MANUALLY OR N IF YOU WANNA FILL THEM IN AUTOMATE");
         if (answer.toUpperCase().equals("Y")) {
-            shopDataInitAutoFill();
-        } else {
             categoryDataShopInitManualFill();
+        } else {
+            shopDataInitAutoFill();
         }
     }
 
@@ -78,9 +76,9 @@ public class ShopService {
     }
 
     private Shop singleShopRecordCreator() {
+        ShopValidator shopValidator = new ShopValidator();
 
         String name = DataManager.getLine("PRESS SHOP NAME");
-        countryService.printAllRecordsInCountries();
         Country country = countryService.findRandomCountryFromDB();
         Shop shop = Shop.builder().name(name).country(country).build();
 
@@ -93,7 +91,7 @@ public class ShopService {
         if (shopByName.isEmpty()) {
             addShopToDB(shop);
         }
-        return addShopToDB(shop);
+        return shop;
     }
 
 
@@ -107,7 +105,7 @@ public class ShopService {
         return shops.get(new Random().nextInt(shops.size()));
     }
 
-    public void clearDataFromShop(){
+    public void clearDataFromShop() {
         shopRepository.deleteAll();
     }
 

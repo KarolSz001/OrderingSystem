@@ -28,15 +28,14 @@ public class ControlService {
         this.stockService = stockService;
         this.customerService = customerService;
         this.orderService = orderService;
-
     }
 
 
     private void initSolution() {
-
         printSolutionDescription();
 
         int choice = DataManager.getInt("PRESS NUMBER OF RESULT YOU WANT TO GET");
+
         switch (choice) {
             case 1: {
                 productService.findProductsWithBiggestPrice();
@@ -74,7 +73,6 @@ public class ControlService {
     }
 
     private void printSolutionDescription() {
-
         sb.setLength(0);
         sb.append("-----------------------------------------------------------------------------\n");
         sb.append("\n1. Download from the database full information " +
@@ -116,26 +114,22 @@ public class ControlService {
 
         customerService.customerDataInitAutoFill();
         orderService.orderInitAuto();
-
     }
 
     private void initDataInDB() {
-
         try {
             System.out.println("\n --------------------->>>>>>WELCOME IN ORDERING SYSTEM MENU APPLICATION<<<<------------------------------- ");
+//            categoryService.categoryInit();
+//            tradeService.tradeInit();
+//            countryService.countryInit();
 
-            categoryService.categoryInit();
-            tradeService.tradeInit();
-            countryService.countryInit();
-
-            shopService.shopInit();
-            producerService.producerInit();
-            productService.productInit();
-            stockService.stockInit();
-
-            customerService.customerInit();
+//            shopService.shopInit();
+//            producerService.producerInit();
+//            productService.productInit();
+//            stockService.stockInit();
+//
+//            customerService.customerInit();
             orderService.orderInit();
-
         } catch (AppException e) {
             e.printStackTrace();
             e.getMessage();
@@ -143,11 +137,11 @@ public class ControlService {
     }
 
     public void controlLoop() {
-
         boolean loopOn = true;
+
         while (loopOn) {
             System.out.println("\n-----------------------------------------------------------------------------");
-            System.out.println(" OrderingSys v1.0 07.12.2019 \n ");
+            System.out.println(" OrderingSys v1.0 14.12.2019 \n ");
             System.out.println(" Karol Szot \n");
             startMenu();
             var read = DataManager.getInt(" PRESS NUMBER TO MAKE A CHOICE ");
@@ -173,7 +167,6 @@ public class ControlService {
         }
     }
 
-
     private void printExit() {
         System.out.println(" EXIT APPLICATION - GOODBYE \n");
         var choice = DataManager.getLine("DO YOU WANT CLEAR ALL DATA FROM DB PRESS Y OR N").toUpperCase().equals("Y") ? clearAndExit() : exit();
@@ -193,15 +186,13 @@ public class ControlService {
 
         customerService.clearDataFromCustomer();
         orderService.clearDataFromOrder();
-
-        return "Y";
+        return "";
     }
 
     private String exit() {
         System.out.println(" EXIT APPLICATION - GOODBYE \n");
-        return "Y";
+        return "";
     }
-
 
     private void startMenu() {
         sb.setLength(0);

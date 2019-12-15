@@ -10,7 +10,6 @@ import com.app.service.dataUtility.DataManager;
 import com.app.service.valid.OrderValidator;
 
 
-import javax.xml.crypto.Data;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
@@ -21,15 +20,13 @@ public class OrderService {
     private final ProductService productService;
     private final StockService stockService;
     private final CustomerOrderRepository customerOrderRepository;
-    private final OrderValidator orderValidator;
     private final CustomerService customerService;
 
 
-    public OrderService(ProductService productService, StockService stockService, CustomerOrderRepository customerOrderRepository, OrderValidator orderValidator, CustomerService customerService) {
+    public OrderService(ProductService productService, StockService stockService, CustomerOrderRepository customerOrderRepository, CustomerService customerService) {
         this.productService = productService;
         this.stockService = stockService;
         this.customerOrderRepository = customerOrderRepository;
-        this.orderValidator = orderValidator;
         this.customerService = customerService;
     }
 
@@ -42,12 +39,11 @@ public class OrderService {
 
 
     public void orderInit() {
-
-        String answer = DataManager.getLine("WELCOME TO PRODUCT DATA PANEL GENERATOR PRESS Y IF YOU WANNA PRESS DATA AUTOMATE OR N IF YOU WANNA FILL THEM IN MANUAL");
+        String answer = DataManager.getLine("WELCOME TO PRODUCT DATA PANEL GENERATOR PRESS Y IF YOU WANNA PRESS DATA MANUALLY OR N IF YOU WANNA FILL THEM IN AUTOMATE");
         if (answer.toUpperCase().equals("Y")) {
-            orderInitAuto();
-        } else {
             orderInitManual();
+        } else {
+            orderInitAuto();
         }
     }
 
@@ -61,13 +57,14 @@ public class OrderService {
     }
 
     private void orderInitManual() {
-        System.out.println("LOADING MANUAL PROGRAM TO UPDATE DATA_BASE");
-        int numberOfRecords = DataManager.getInt("PRESS NUMBER OF PRODUCERS YOU WANNA ADD TO DB");
+        System.out.println("\nLOADING MANUAL PROGRAM TO UPDATE DATA_BASE");
+        int numberOfRecords = DataManager.getInt("\nPRESS NUMBER OF ORDERS YOU WANNA ADD TO DB");
 
         for (int i = 1; i <= numberOfRecords; i++) {
             singleOrderRecordCreator();
+
         }
-        System.out.println("LOADING DATA COMPLETED ----> BELOW ALL RECORDS OF PRODUCTS FROM DB");
+        System.out.println("\nLOADING DATA COMPLETED ----> BELOW ALL RECORDS OF PRODUCTS FROM DB");
         printOrderRecordsFromDB();
     }
 
@@ -93,6 +90,8 @@ public class OrderService {
     }
 
     public CustomerOrder singleOrderRecordCreator() {
+
+        OrderValidator orderValidator = new OrderValidator();
         System.out.println("PRINT ALL CUSTOMERS");
         customerService.showAllCustomersInDB();
         Long idCustomer = DataManager.getLong("PRESS ID CUSTOMER");
@@ -101,9 +100,13 @@ public class OrderService {
         Integer quantity = DataManager.getInt("PRESS QUANTITY");
         EPayment ePayment = EPayment.values()[DataManager.getInt("CHOOSE METHOD TO PAY FROM 0 CASH, 1 CARD, 2 MONEY_TRANSFER - PRESS NUMBER")];
         Payment payment = Payment.builder().payment(ePayment).build();
-        productService.showAllProductsInDB();
-        Product product = productService.findProductByName(DataManager.getLine("PRESS NAME OF PRODUCT"));
+//        productService.showAllProductsInDB();
+        stockService.findAllProductsInStock();
+        Long idProduct= DataManager.getLong("\nPRESS ID PRODUCT");
+        Product product = productService.findProductById(idProduct);
         decreaseQuantityOfProductInStock(product.getName(), quantity);
+
+        stockService.findAllProductsInStock();
 
         CustomerOrder order = CustomerOrder.builder().customer(customer).date(LocalDate.now()).discount(discount).quantity(quantity).payment(payment).product(product).build();
 
@@ -115,19 +118,17 @@ public class OrderService {
     }
 
     private void decreaseQuantityOfProductInStock(String productName, Integer quantity) {
-        Long idProductInStock = productService.getIdProductInStock(productName);
-        Stock stock = stockService.findStockInDbById(idProductInStock);
-        Integer quantityProductInStock = productService.getQuantityOfProductInStock(productName) - quantity;
+
+        Stock stock = stockService.getQuantityOfProductInStock(productName);
+        Integer quantityProductInStock =  stock.getQuantity() - quantity;
+
         if (quantityProductInStock < 0) {
             throw new AppException("THERE IS NO ENOUGH PRODUCT IN STOCK");
         }
+
         stock.setQuantity(quantityProductInStock);
         stockService.addStockDb(stock);// is it ok, means update quantity in previous record
-
     }
-    /*private boolean isQuantityOrderProductCorrect(CustomerOrder order) {
-        return order.getQuantity() <= (getQuantityOfProductInStock(order.getProduct().getName()));
-    }*/
 
     public void clearDataFromOrder() {
         customerOrderRepository.deleteAll();
