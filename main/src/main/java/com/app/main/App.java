@@ -50,9 +50,10 @@ public class App {
         var controlService = new ControlService(categoryService, tradeService, countryService, shopService, producerService, productService, stockService, customerService, orderService);
 //        controlService.controlLoop();
 
-        stockService.clearDataFromStock();
+//        stockService.clearDataFromStock();
+//        stockService.stockDataInitAutoFill();
         stockService.stockDataInitAutoFill();
-        stockService.stockDataInitAutoFill();
+
 
 
 

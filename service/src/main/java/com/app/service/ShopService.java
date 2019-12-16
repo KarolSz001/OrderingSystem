@@ -101,7 +101,6 @@ public class ShopService {
 
     public Shop findRandomShopFromDb() {
         List<Shop> shops = shopRepository.findAll();
-        System.out.println(shops);
         return shops.get(new Random().nextInt(shops.size()));
     }
 

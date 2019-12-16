@@ -46,14 +46,34 @@ public class StockService {
         Shop shop = shopService.findShopById(idShop);
         Integer quantityProduct = DataManager.getInt("PRESS NUMBER OF PRODUCT IN STOCK");
 
-        if (!isProductInStock(product.getName())) {
-            Integer quantity = stockRepository.getQuantityProductInStock(product.getName()).orElseThrow(() -> new AppException("NO RECORDS IN DB"));
-            quantityProduct = quantityProduct + quantity;
+        if (isProductInStock(product.getName())) {
+            Stock stockFromDb = stockRepository.findOneByProductName(product.getName()).orElseThrow(() -> new AppException("NO RECORDS IN DB"));
+            Integer quantity = stockFromDb.getQuantity();
+            stockFromDb.setQuantity(quantityProduct + quantity);
+            return addStockDb(stockFromDb);
+
+        } else {
+            Stock stock = Stock.builder().product(product).quantity(quantityProduct).shop(shop).build();
+            return addRecordToStock(stock);
         }
+    }
 
-        Stock stock = Stock.builder().product(product).quantity(quantityProduct).shop(shop).build();
+    private void generateStockInDBAutoMode() {
+        for (int i = 1; i < 4; i++) {
+            Product product = productService.findRandomProductFromDb();
+            Shop shop = shopService.findRandomShopFromDb();
+            Stock stock = Stock.builder().product(product).quantity(1).shop(shop).build();
+            Integer quantityProduct = stock.getQuantity();
 
-        return addRecordToStock(stock);
+            if (isProductInStock(product.getName())) {
+                Stock stockFromDb = stockRepository.findOneByProductName(product.getName()).orElseThrow(() -> new AppException("NO RECORDS IN DB"));
+                Integer quantity = stockFromDb.getQuantity();
+                stockFromDb.setQuantity(quantityProduct + quantity);
+                addStockDb(stockFromDb);
+            } else {
+                addStockDb(stock);
+            }
+        }
     }
 
     private boolean isProductInStock(String productName) {
@@ -88,19 +108,6 @@ public class StockService {
         printAllStockRecordsInDB();
     }
 
-    private void generateStockInDBAutoMode() {
-        for (int i = 1; i < 4; i++) {
-            Product product = productService.findRandomProductFromDb();
-            Shop shop = shopService.findRandomShopFromDb();
-            Stock stock = Stock.builder().product(product).quantity(1).shop(shop).build();
-            Integer quantityProduct = stock.getQuantity();
-            if (!isProductInStock(product.getName())) {
-                Integer quantity = stockRepository.getQuantityProductInStock(product.getName()).orElseThrow(() -> new AppException("NO RECORDS IN DB"));
-                stock.setQuantity(quantityProduct + quantity);
-            }
-            addStockDb(stock);
-        }
-    }
 
     private void stockDataShopInitManualFill() {
         System.out.println("LOADING MANUAL PROGRAM TO UPDATE DATA_BASE");
