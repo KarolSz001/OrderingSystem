@@ -1,5 +1,6 @@
 package com.app.repo.generic;
 
+import com.app.model.Product;
 import com.app.model.Stock;
 import com.app.repo.CrudRepository;
 
@@ -11,7 +12,7 @@ public interface StockRepository extends CrudRepository<Stock, Long> {
     List<Object[]> query4();
     List<Object[]> query5(String name);
     Optional<Stock> findOneByProductName(String productName);
-    List<Object[]> findAllProducts();
+    List<Product> findAllProducts();
     Optional<Integer> getQuantityProductInStock(String nameProduct);
 
 }

@@ -52,7 +52,11 @@ public class App {
 
 //        stockService.clearDataFromStock();
 //        stockService.stockDataInitAutoFill();
-        stockService.stockDataInitAutoFill();
+//        stockService.stockDataInitAutoFill();
+        stockService.printAllStockRecordsInDB();
+        orderService.clearDataFromOrder();
+        orderService.orderAuto();  // number of quantity is smaller than in stoc and clear if quantity is 0;
+        stockService.printAllStockRecordsInDB();
 
 
 

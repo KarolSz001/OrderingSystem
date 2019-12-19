@@ -41,13 +41,13 @@ public class OrderService {
     public void orderInit() {
         String answer = DataManager.getLine("WELCOME TO PRODUCT DATA PANEL GENERATOR PRESS Y IF YOU WANNA PRESS DATA MANUALLY OR N IF YOU WANNA FILL THEM IN AUTOMATE");
         if (answer.toUpperCase().equals("Y")) {
-            orderInitManual();
+            orderManual();
         } else {
-            orderInitAuto();
+            orderAuto();
         }
     }
 
-    public void orderInitAuto() {
+    public void orderAuto() {
         generateOrderAutoMode();
         printOrderRecordsFromDB();
     }
@@ -56,7 +56,7 @@ public class OrderService {
         customerOrderRepository.findAll().forEach((s) -> System.out.println(s + "\n"));
     }
 
-    private void orderInitManual() {
+    private void orderManual() {
         System.out.println("\nLOADING MANUAL PROGRAM TO UPDATE DATA_BASE");
         int numberOfRecords = DataManager.getInt("\nPRESS NUMBER OF ORDERS YOU WANNA ADD TO DB");
 
@@ -70,15 +70,34 @@ public class OrderService {
 
     private void generateOrderAutoMode() {
         for (int i = 1; i <= 2; i++) {
-
             Customer customer = customerService.findRandomCustomerFromDb();
             BigDecimal discount = generateDiscount();
-            Product product = productService.findRandomProductFromDb();
+            Product product = findRandomProductFromStock();
             EPayment ePayment = EPayment.findRandomPayment();
             Payment payment = Payment.builder().payment(ePayment).build();
-            CustomerOrder customerOrder = CustomerOrder.builder().customer(customer).date(LocalDate.now()).discount(discount).quantity(getNumberOfQuantity()).payment(payment).product(product).build();
-            addOrderToDB(customerOrder);
+            Integer productQuantityInStock = stockService.getStockByProductName(product.getName()).getQuantity();
+            Integer quantityInOrder = getNumberOfQuantity();
+            Stock stock = stockService.getStockByProductName(product.getName());
+            Long idStock = stock.getId();
+
+            if (quantityInOrder >= productQuantityInStock) {
+                CustomerOrder customerOrder = CustomerOrder.builder().customer(customer).date(LocalDate.now()).discount(discount).quantity(productQuantityInStock).payment(payment).product(product).build();
+                addOrderToDB(customerOrder);
+                stockService.clearProductFromStock(idStock); // because number of product is 0
+
+            } else {
+                CustomerOrder customerOrder = CustomerOrder.builder().customer(customer).date(LocalDate.now()).discount(discount).quantity(quantityInOrder).payment(payment).product(product).build();
+                addOrderToDB(customerOrder);
+                // reduce quantity in Stock
+                Integer reducedQuantity = productQuantityInStock - quantityInOrder;
+                stockService.reduceProductQuantityInStock(stock, reducedQuantity);
+            }
         }
+    }
+
+    private Product findRandomProductFromStock() {
+        List<Product> products = stockService.findAllProductsInStock();
+        return products.get(new Random().nextInt(products.size() - 1));
     }
 
     private Integer getNumberOfQuantity() {
@@ -90,7 +109,6 @@ public class OrderService {
     }
 
     public CustomerOrder singleOrderRecordCreator() {
-
         OrderValidator orderValidator = new OrderValidator();
         System.out.println("PRINT ALL CUSTOMERS");
         customerService.showAllCustomersInDB();
@@ -100,9 +118,10 @@ public class OrderService {
         Integer quantity = DataManager.getInt("PRESS QUANTITY");
         EPayment ePayment = EPayment.values()[DataManager.getInt("CHOOSE METHOD TO PAY FROM 0 CASH, 1 CARD, 2 MONEY_TRANSFER - PRESS NUMBER")];
         Payment payment = Payment.builder().payment(ePayment).build();
-//        productService.showAllProductsInDB();
         stockService.findAllProductsInStock();
-        Long idProduct= DataManager.getLong("\nPRESS ID PRODUCT");
+//        Stock stock = stockService.getStockByProductName(product.getName());
+//        Long idStock = stock.getId();
+        Long idProduct = DataManager.getLong("\nPRESS ID PRODUCT");
         Product product = productService.findProductById(idProduct);
         decreaseQuantityOfProductInStock(product.getName(), quantity);
 
@@ -117,18 +136,17 @@ public class OrderService {
         return addOrderToDB(order);
     }
 
-    private void decreaseQuantityOfProductInStock(String productName, Integer quantity) {
+   /* private void decreaseQuantityOfProductInStock(String productName, Integer quantity) {
 
-        Stock stock = stockService.getQuantityOfProductInStock(productName);
-        Integer quantityProductInStock =  stock.getQuantity() - quantity;
+        Stock stock = stockService.getStockByProductName(productName);
+        Integer quantityProductInStock = stock.getQuantity() - quantity;
 
         if (quantityProductInStock < 0) {
             throw new AppException("THERE IS NO ENOUGH PRODUCT IN STOCK");
         }
-
         stock.setQuantity(quantityProductInStock);
         stockService.addStockDb(stock);// is it ok, means update quantity in previous record
-    }
+    }*/
 
     public void clearDataFromOrder() {
         customerOrderRepository.deleteAll();

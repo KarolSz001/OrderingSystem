@@ -113,7 +113,7 @@ public class ControlService {
         stockService.stockDataInitAutoFill();
 
         customerService.customerDataInitAutoFill();
-        orderService.orderInitAuto();
+        orderService.orderAuto();
     }
 
     private void initDataInDB() {

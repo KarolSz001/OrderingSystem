@@ -1,5 +1,6 @@
 package com.app.repo.impl;
 
+import com.app.model.Product;
 import com.app.model.Stock;
 import com.app.repo.generic.AbstractCrudRepository;
 import com.app.repo.generic.StockRepository;
@@ -15,8 +16,7 @@ public class StockRepositoryImpl extends AbstractCrudRepository<Stock, Long> imp
         super(persistenceUnit);
     }
 
-
-    public Optional<Integer> getQuantityProductInStock(String nameProduct){
+    public Optional<Integer> getQuantityProductInStock(String nameProduct) {
         EntityManager em = null;
         EntityTransaction tx = null;
         Optional<Integer> result = null;
@@ -28,7 +28,7 @@ public class StockRepositoryImpl extends AbstractCrudRepository<Stock, Long> imp
 
             result = em
                     .createQuery("select s.quantity from Stock s join s.product p where p.name = :nameProduct", Integer.class)
-                    .setParameter("nameProduct",nameProduct)
+                    .setParameter("nameProduct", nameProduct)
                     .getResultStream()
                     .findFirst();
 
@@ -47,10 +47,10 @@ public class StockRepositoryImpl extends AbstractCrudRepository<Stock, Long> imp
         return result;
     }
 
-    public List<Object[]> findAllProducts() {
+    public List<Product> findAllProducts() {
         EntityManager em = null;
         EntityTransaction tx = null;
-        List<Object[]> result = null;
+        List<Product> result = null;
 
         try {
             em = emf.createEntityManager();
@@ -58,7 +58,7 @@ public class StockRepositoryImpl extends AbstractCrudRepository<Stock, Long> imp
             tx.begin();
 
             result = em
-                    .createQuery("select p, s.quantity from Stock s join s.product p", Object[].class)
+                    .createQuery("select p from Stock s join s.product p",Product.class)
                     .getResultList();
 
             tx.commit();

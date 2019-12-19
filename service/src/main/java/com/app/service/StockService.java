@@ -7,6 +7,7 @@ import com.app.repo.generic.StockRepository;
 import com.app.service.dataUtility.DataManager;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -125,7 +126,11 @@ public class StockService {
         stockRepository.deleteAll();
     }
 
-    public Stock getQuantityOfProductInStock(String productName) {
+    public  void clearProductFromStock(Long idNumber){
+        stockRepository.delete(idNumber);
+    }
+
+    public Stock getStockByProductName(String productName) {
         return stockRepository.findOneByProductName(productName).orElseThrow(() -> new AppException("NO FOUND RECORD"));
     }
 
@@ -171,13 +176,18 @@ public class StockService {
                 .forEach((k, v) -> System.out.println(k + "::::" + v));
     }
 
-    public void findAllProductsInStock() {
-        stockRepository.findAllProducts()
+    public List<Product> findAllProductsInStock() {
+        return stockRepository.findAllProducts();
 //                .stream()
 //                .collect(Collectors.toMap(
 //                        e -> (Product) e[0],
 //                        e -> (Integer) e[1]
 //                )).forEach((k, v) -> System.out.println(k + ":::::" + v));
-                .forEach(s -> System.out.println(Arrays.toString(s)));
+
+    }
+
+    public void reduceProductQuantityInStock(Stock stock, Integer reducedQuantity) {
+        stock.setQuantity(reducedQuantity);
+        stockRepository.addOrUpdate(stock);
     }
 }
