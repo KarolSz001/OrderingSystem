@@ -108,32 +108,50 @@ public class OrderService {
         return BigDecimal.valueOf(new Random().nextDouble()).setScale(1, BigDecimal.ROUND_DOWN);
     }
 
-    public CustomerOrder singleOrderRecordCreator() {
+    public void singleOrderRecordCreator() {
+
         OrderValidator orderValidator = new OrderValidator();
         System.out.println("PRINT ALL CUSTOMERS");
         customerService.showAllCustomersInDB();
         Long idCustomer = DataManager.getLong("PRESS ID CUSTOMER");
         Customer customer = customerService.findCustomerById(idCustomer);
         BigDecimal discount = BigDecimal.valueOf(DataManager.getDouble("PRESS DISCOUNT RANGE 0.0-1.0"));
-        Integer quantity = DataManager.getInt("PRESS QUANTITY");
+        Integer quantityInOrder = DataManager.getInt("PRESS QUANTITY");
         EPayment ePayment = EPayment.values()[DataManager.getInt("CHOOSE METHOD TO PAY FROM 0 CASH, 1 CARD, 2 MONEY_TRANSFER - PRESS NUMBER")];
         Payment payment = Payment.builder().payment(ePayment).build();
         stockService.findAllProductsInStock();
-//        Stock stock = stockService.getStockByProductName(product.getName());
-//        Long idStock = stock.getId();
         Long idProduct = DataManager.getLong("\nPRESS ID PRODUCT");
         Product product = productService.findProductById(idProduct);
-        decreaseQuantityOfProductInStock(product.getName(), quantity);
+        Stock stock = stockService.getStockByProductName(product.getName());
+        Long idStock = stock.getId();
+        Integer productQuantityInStock = stockService.getStockByProductName(product.getName()).getQuantity();
+        CustomerOrder customerOrder;
 
-        stockService.findAllProductsInStock();
+        if (quantityInOrder >= productQuantityInStock) {
+            customerOrder = CustomerOrder.builder().customer(customer).date(LocalDate.now()).discount(discount).quantity(productQuantityInStock).payment(payment).product(product).build();
+            orderValidator.validate(customerOrder);
+            if (orderValidator.hasErrors()) {
+                throw new AppException("ERROR IN PRODUCT VALIDATION");
+            }
+            addOrderToDB(customerOrder);
+            stockService.clearProductFromStock(idStock); // because number of product is 0
 
-        CustomerOrder order = CustomerOrder.builder().customer(customer).date(LocalDate.now()).discount(discount).quantity(quantity).payment(payment).product(product).build();
+        } else {
+            customerOrder = CustomerOrder.builder().customer(customer).date(LocalDate.now()).discount(discount).quantity(quantityInOrder).payment(payment).product(product).build();
+            orderValidator.validate(customerOrder);
+            if (orderValidator.hasErrors()) {
+                throw new AppException("ERROR IN PRODUCT VALIDATION");
+            }
+            addOrderToDB(customerOrder);
+            // reduce quantity in Stock
+            Integer reducedQuantity = productQuantityInStock - quantityInOrder;
+            stockService.reduceProductQuantityInStock(stock, reducedQuantity);
+        }
 
-        orderValidator.validate(order);
+        orderValidator.validate(customerOrder);
         if (orderValidator.hasErrors()) {
             throw new AppException("ERROR IN PRODUCT VALIDATION");
         }
-        return addOrderToDB(order);
     }
 
    /* private void decreaseQuantityOfProductInStock(String productName, Integer quantity) {
